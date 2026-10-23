@@ -1,0 +1,3339 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Customer Management - Royal Studio Suite</title>
+
+    <style>
+
+        :root {
+            --royal-navy: #0b132b;
+            --royal-deep: #1c2541;
+            --royal-accent: #3a506b;
+
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-hover: #b8962e;
+            --gold-glow: rgba(212, 175, 55, 0.25);
+
+            --bg-light: #f8f9fa;
+            --card-bg: #ffffff;
+
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+        }
+
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            font-family:
+                    'Cinzel',
+                    'Segoe UI',
+                    Georgia,
+                    Arial,
+                    sans-serif;
+
+            background: #f4f5f7;
+
+            color: var(--text-dark);
+
+            min-height: 100vh;
+        }
+
+
+        /* =====================================================
+           HEADER
+           ===================================================== */
+
+        .header {
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #090e17 0%,
+                            #1c2541 50%,
+                            #0b132b 100%
+                    );
+
+            color: white;
+
+            padding: 20px 40px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 20px;
+
+            border-bottom:
+                    3px solid var(--gold-primary);
+
+            box-shadow:
+                    0 8px 25px rgba(0, 0, 0, 0.25);
+        }
+
+
+        .header-title-wrapper {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+
+        .crown-icon {
+
+            font-size: 28px;
+
+            color:
+                    var(--gold-primary);
+
+            filter:
+                    drop-shadow(
+                            0 0 6px
+                            var(--gold-glow)
+                    );
+        }
+
+
+        .header h1 {
+
+            font-size: 26px;
+
+            font-weight: 700;
+
+            letter-spacing: 1px;
+
+            background:
+                    linear-gradient(
+                            180deg,
+                            #ffffff 0%,
+                            var(--gold-light) 100%
+                    );
+
+            -webkit-background-clip: text;
+
+            -webkit-text-fill-color: transparent;
+
+            text-transform: uppercase;
+        }
+
+
+        .studio-info {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            font-size: 13px;
+        }
+
+
+        .studio-label {
+
+            color:
+                    var(--gold-light);
+
+            font-weight: 600;
+
+            letter-spacing: 0.5px;
+        }
+
+
+        .studio-id,
+        .studio-name-badge,
+        .owner-name {
+
+            color: white;
+
+            padding: 8px 16px;
+
+            border-radius: 30px;
+
+            font-weight: 600;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            border:
+                    1px solid
+                    rgba(212, 175, 55, 0.3);
+
+            background:
+                    rgba(28, 37, 65, 0.6);
+
+            backdrop-filter: blur(5px);
+
+            transition: all 0.3s ease;
+        }
+
+
+        .studio-id {
+
+            border-color:
+                    rgba(59, 130, 246, 0.5);
+        }
+
+
+        .studio-name-badge {
+
+            border-color:
+                    var(--gold-primary);
+
+            box-shadow:
+                    0 0 10px
+                    var(--gold-glow);
+        }
+
+
+        .owner-name {
+
+            border-color:
+                    rgba(168, 85, 247, 0.5);
+        }
+
+
+        .studio-id:hover,
+        .studio-name-badge:hover,
+        .owner-name:hover {
+
+            transform:
+                    translateY(-2px);
+
+            border-color:
+                    var(--gold-primary);
+        }
+
+
+        /* =====================================================
+           STUDIO LOGO
+           ===================================================== */
+
+        .studio-logo-wrapper {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            width: 32px;
+
+            height: 32px;
+
+            border-radius: 50%;
+
+            overflow: hidden;
+
+            background: white;
+
+            border:
+                    2px solid
+                    var(--gold-primary);
+
+            flex-shrink: 0;
+
+            box-shadow:
+                    0 0 8px
+                    var(--gold-glow);
+
+            cursor: pointer;
+
+            transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
+        }
+
+
+        .studio-logo-wrapper:hover {
+
+            transform:
+                    scale(1.15);
+
+            box-shadow:
+                    0 0 12px
+                    var(--gold-primary);
+        }
+
+
+        .studio-logo-img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: contain;
+
+            background: white;
+        }
+
+
+        .studio-logo-fallback {
+
+            display: none;
+
+            color:
+                    var(--gold-primary);
+
+            font-weight: bold;
+
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           LOGOUT
+           ===================================================== */
+
+        .logout-btn {
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #991b1b,
+                            #dc2626
+                    );
+
+            color: white;
+
+            text-decoration: none;
+
+            padding: 9px 20px;
+
+            border-radius: 30px;
+
+            font-weight: 600;
+
+            border:
+                    1px solid #f87171;
+
+            transition: all 0.3s ease;
+
+            box-shadow:
+                    0 4px 12px
+                    rgba(220, 38, 38, 0.2);
+        }
+
+
+        .logout-btn:hover {
+
+            transform:
+                    translateY(-2px);
+
+            box-shadow:
+                    0 6px 18px
+                    rgba(220, 38, 38, 0.4);
+        }
+
+
+        /* =====================================================
+           MAIN CONTAINER
+           ===================================================== */
+
+        .container {
+
+            width: 90%;
+
+            max-width: 1200px;
+
+            margin: 35px auto;
+        }
+
+
+        /* =====================================================
+           STATS
+           ===================================================== */
+
+        .stats-bar {
+
+            display: grid;
+
+            grid-template-columns:
+                    repeat(
+                            auto-fit,
+                            minmax(240px, 1fr)
+                    );
+
+            gap: 20px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .stat-card {
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 14px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+
+            border:
+                    1px solid
+                    rgba(212, 175, 55, 0.2);
+
+            border-left:
+                    5px solid
+                    var(--gold-primary);
+
+            box-shadow:
+                    0 5px 15px
+                    rgba(0, 0, 0, 0.03);
+
+            transition: all 0.3s ease;
+        }
+
+
+        .stat-card:hover {
+
+            transform:
+                    translateY(-4px);
+
+            box-shadow:
+                    0 10px 25px
+                    rgba(11, 19, 43, 0.08);
+
+            border-color:
+                    var(--gold-primary);
+        }
+
+
+        .stat-icon {
+
+            width: 50px;
+
+            height: 50px;
+
+            border-radius: 12px;
+
+            background:
+                    var(--royal-navy);
+
+            color:
+                    var(--gold-primary);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 22px;
+
+            box-shadow:
+                    inset
+                    0 0 10px
+                    rgba(0,0,0,0.5);
+        }
+
+
+        .stat-info h4 {
+
+            font-size: 12px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            color:
+                    var(--text-muted);
+
+            margin-bottom: 4px;
+        }
+
+
+        .stat-info p {
+
+            font-size: 24px;
+
+            font-weight: 700;
+
+            color:
+                    var(--royal-navy);
+        }
+
+
+        /* =====================================================
+           MESSAGES
+           ===================================================== */
+
+        .success-message,
+        .error-message {
+
+            padding: 16px 20px;
+
+            border-radius: 12px;
+
+            margin-bottom: 25px;
+
+            font-weight: 600;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            animation:
+                    slideDown 0.4s ease;
+        }
+
+
+        .success-message {
+
+            background:
+                    #f0fdf4;
+
+            color:
+                    #15803d;
+
+            border:
+                    1px solid #bbf7d0;
+        }
+
+
+        .error-message {
+
+            background:
+                    #fef2f2;
+
+            color:
+                    #b91c1c;
+
+            border:
+                    1px solid #fecaca;
+        }
+
+
+        /* =====================================================
+           FORM
+           ===================================================== */
+
+        .form-container {
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 16px;
+
+            border:
+                    1px solid #e2e8f0;
+
+            box-shadow:
+                    0 10px 30px
+                    rgba(11, 19, 43, 0.04);
+
+            margin-bottom: 40px;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+
+        .form-container::before {
+
+            content: '';
+
+            position: absolute;
+
+            top: 0;
+
+            left: 0;
+
+            right: 0;
+
+            height: 4px;
+
+            background:
+                    linear-gradient(
+                            90deg,
+                            var(--royal-navy),
+                            var(--gold-primary),
+                            var(--royal-navy)
+                    );
+        }
+
+
+        .form-container h2 {
+
+            margin-bottom: 25px;
+
+            color:
+                    var(--royal-navy);
+
+            font-size: 22px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                    1fr 1fr;
+
+            gap: 22px;
+        }
+
+
+        .form-group {
+
+            display: flex;
+
+            flex-direction: column;
+        }
+
+
+        .form-group.full {
+
+            grid-column:
+                    1 / 3;
+        }
+
+
+        label {
+
+            margin-bottom: 8px;
+
+            font-weight: 600;
+
+            color:
+                    var(--royal-deep);
+
+            font-size: 14px;
+        }
+
+
+        input[type="text"],
+        input[type="tel"],
+        textarea {
+
+            width: 100%;
+
+            padding: 13px 16px;
+
+            border:
+                    1.5px solid #cbd5e1;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition:
+                    all 0.3s ease;
+
+            background:
+                    #f8fafc;
+        }
+
+
+        input:focus,
+        textarea:focus {
+
+            border-color:
+                    var(--gold-primary);
+
+            background: white;
+
+            box-shadow:
+                    0 0 0 4px
+                    var(--gold-glow);
+        }
+
+
+        textarea {
+
+            resize: vertical;
+
+            min-height: 90px;
+        }
+
+
+        /* =====================================================
+           FILE UPLOAD
+           ===================================================== */
+
+        .file-upload-box {
+
+            border:
+                    2px dashed #cbd5e1;
+
+            padding: 25px;
+
+            border-radius: 12px;
+
+            text-align: center;
+
+            background:
+                    #f8fafc;
+
+            cursor: pointer;
+
+            transition:
+                    all 0.3s ease;
+
+            position: relative;
+        }
+
+
+        .file-upload-box:hover,
+        .file-upload-box.dragover {
+
+            border-color:
+                    var(--gold-primary);
+
+            background:
+                    #fffdf5;
+        }
+
+
+        .file-upload-box input[type="file"] {
+
+            position: absolute;
+
+            inset: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            opacity: 0;
+
+            cursor: pointer;
+        }
+
+
+        .upload-icon {
+
+            font-size: 32px;
+
+            color:
+                    var(--gold-primary);
+
+            margin-bottom: 8px;
+        }
+
+
+        .preview-thumbs {
+
+            display: flex;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            margin-top: 15px;
+        }
+
+
+        .preview-thumb {
+
+            width: 65px;
+
+            height: 65px;
+
+            border-radius: 8px;
+
+            object-fit: cover;
+
+            border:
+                    2px solid
+                    var(--gold-primary);
+
+            box-shadow:
+                    0 4px 10px
+                    rgba(0,0,0,0.1);
+        }
+
+
+        /* =====================================================
+           SUBMIT BUTTON
+           ===================================================== */
+
+        .submit-btn {
+
+            margin-top: 25px;
+
+            padding: 14px 32px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            var(--royal-navy),
+                            var(--royal-deep)
+                    );
+
+            color:
+                    var(--gold-light);
+
+            border:
+                    1px solid
+                    var(--gold-primary);
+
+            cursor: pointer;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            letter-spacing: 0.5px;
+
+            transition:
+                    all 0.3s ease;
+
+            box-shadow:
+                    0 5px 15px
+                    rgba(11, 19, 43, 0.2);
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .submit-btn:hover {
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            var(--royal-deep),
+                            var(--royal-navy)
+                    );
+
+            transform:
+                    translateY(-2px);
+
+            box-shadow:
+                    0 8px 20px
+                    rgba(212, 175, 55, 0.3);
+
+            color: white;
+        }
+
+
+        /* =====================================================
+           CUSTOMER LIST
+           ===================================================== */
+
+        .section-header {
+
+            display: flex;
+
+            justify-content:
+                    space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+
+            flex-wrap: wrap;
+
+            gap: 15px;
+        }
+
+
+        .section-title {
+
+            color:
+                    var(--royal-navy);
+
+            font-size: 22px;
+
+            font-weight: 700;
+        }
+
+
+        .search-box {
+
+            position: relative;
+
+            min-width: 280px;
+        }
+
+
+        .search-box input {
+
+            padding-left: 42px;
+
+            border-radius: 25px;
+
+            background: white;
+
+            border:
+                    1px solid #cbd5e1;
+        }
+
+
+        .search-icon {
+
+            position: absolute;
+
+            left: 15px;
+
+            top: 50%;
+
+            transform:
+                    translateY(-50%);
+
+            color:
+                    var(--gold-primary);
+
+            font-size: 16px;
+        }
+
+
+        .no-customers {
+
+            background: white;
+
+            padding: 45px;
+
+            text-align: center;
+
+            border-radius: 14px;
+
+            color:
+                    var(--text-muted);
+
+            border:
+                    1px solid #e2e8f0;
+
+            box-shadow:
+                    0 4px 15px
+                    rgba(0,0,0,0.02);
+        }
+
+
+        .customer-card {
+
+            background: white;
+
+            padding: 24px;
+
+            margin-bottom: 20px;
+
+            border-radius: 14px;
+
+            border:
+                    1px solid #e2e8f0;
+
+            box-shadow:
+                    0 4px 12px
+                    rgba(0,0,0,0.03);
+
+            transition:
+                    all 0.3s ease;
+        }
+
+
+        .customer-card:hover {
+
+            border-color:
+                    rgba(212, 175, 55, 0.5);
+
+            box-shadow:
+                    0 8px 25px
+                    rgba(11, 19, 43, 0.06);
+        }
+
+
+        .customer-header {
+
+            display: flex;
+
+            justify-content:
+                    space-between;
+
+            align-items: center;
+
+            cursor: pointer;
+
+            user-select: none;
+        }
+
+
+        .customer-title-group {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 14px;
+        }
+
+
+        .customer-name {
+
+            margin: 0;
+
+            color:
+                    var(--royal-navy);
+
+            font-size: 20px;
+
+            font-weight: 700;
+        }
+
+
+        .photo-badge {
+
+            background:
+                    #fefce8;
+
+            color:
+                    #854d0e;
+
+            border:
+                    1px solid #fef08a;
+
+            padding:
+                    4px 12px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+
+        .arrow-btn {
+
+            width: 36px;
+
+            height: 36px;
+
+            border-radius: 50%;
+
+            background:
+                    #f1f5f9;
+
+            color:
+                    var(--royal-navy);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 14px;
+
+            transition:
+                    all 0.3s ease;
+        }
+
+
+        .arrow-btn.rotate {
+
+            transform:
+                    rotate(180deg);
+
+            background:
+                    var(--royal-navy);
+
+            color:
+                    var(--gold-primary);
+        }
+
+
+        /* =====================================================
+           CUSTOMER INFO
+           ===================================================== */
+
+        .customer-info {
+
+            margin-top: 20px;
+
+            padding-top: 18px;
+
+            border-top:
+                    1px solid #f1f5f9;
+
+            display: grid;
+
+            grid-template-columns:
+                    repeat(
+                            auto-fit,
+                            minmax(200px, 1fr)
+                    );
+
+            gap: 15px;
+        }
+
+
+        .info-item label {
+
+            font-size: 11px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+
+            color:
+                    var(--text-muted);
+
+            margin-bottom: 2px;
+
+            display: block;
+        }
+
+
+        .info-item span {
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            color:
+                    var(--royal-deep);
+        }
+
+
+        /* =====================================================
+           CUSTOMER IMAGES
+           ===================================================== */
+
+        .customer-images {
+
+            display: none;
+
+            margin-top: 20px;
+
+            padding-top: 20px;
+
+            border-top:
+                    1px dashed #e2e8f0;
+        }
+
+
+        .customer-images.show {
+
+            display: block;
+
+            animation:
+                    fadeIn 0.3s ease;
+        }
+
+
+        .images-title {
+
+            font-size: 14px;
+
+            color:
+                    var(--royal-navy);
+
+            margin-bottom: 15px;
+
+            font-weight: 700;
+        }
+
+
+        .images-grid {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 15px;
+        }
+
+
+        .image-box {
+
+            width: 150px;
+
+            height: 150px;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+
+            border:
+                    2px solid #f1f5f9;
+
+            background:
+                    #f8fafc;
+
+            position: relative;
+
+            box-shadow:
+                    0 4px 10px
+                    rgba(0,0,0,0.05);
+
+            transition:
+                    all 0.3s ease;
+        }
+
+
+        .image-box:hover {
+
+            border-color:
+                    var(--gold-primary);
+
+            transform:
+                    scale(1.03);
+
+            box-shadow:
+                    0 8px 20px
+                    rgba(0,0,0,0.12);
+        }
+
+
+        .image-box img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+
+            cursor: pointer;
+        }
+
+
+        .no-image {
+
+            color:
+                    var(--text-muted);
+
+            font-size: 14px;
+
+            padding:
+                    10px 0;
+        }
+
+
+        /* =====================================================
+           ACTION BUTTONS
+           ===================================================== */
+
+        .customer-actions {
+
+            margin-top: 22px;
+
+            padding-top: 18px;
+
+            border-top:
+                    1px solid #f1f5f9;
+
+            display: flex;
+
+            justify-content:
+                    flex-end;
+
+            align-items: center;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .action-btn {
+
+            border: none;
+
+            text-decoration: none;
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            transition:
+                    all 0.3s ease;
+        }
+
+
+        .action-btn:disabled {
+
+            opacity: 0.6;
+
+            cursor: not-allowed;
+
+            transform: none !important;
+        }
+
+
+        .generate-link-btn {
+
+            background:
+                    var(--royal-navy);
+
+            color:
+                    var(--gold-light);
+
+            border:
+                    1px solid
+                    var(--gold-primary);
+        }
+
+
+        .generate-link-btn:hover {
+
+            background:
+                    var(--royal-deep);
+
+            box-shadow:
+                    0 4px 12px
+                    var(--gold-glow);
+
+            transform:
+                    translateY(-2px);
+        }
+
+
+        .selection-btn {
+
+            background:
+                    #4c1d95;
+
+            color:
+                    #ddd6fe;
+        }
+
+
+        .selection-btn:hover {
+
+            background:
+                    #5b21b6;
+
+            transform:
+                    translateY(-2px);
+        }
+
+
+        .albums-btn {
+
+            background:
+                    #065f46;
+
+            color:
+                    #a7f3d0;
+        }
+
+
+        .albums-btn:hover {
+
+            background:
+                    #047857;
+
+            transform:
+                    translateY(-2px);
+        }
+
+
+        .delete-btn {
+
+            background:
+                    #991b1b;
+
+            color:
+                    #fecaca;
+        }
+
+
+        .delete-btn:hover {
+
+            background:
+                    #dc2626;
+
+            transform:
+                    translateY(-2px);
+        }
+
+
+        /* =====================================================
+           MODALS
+           ===================================================== */
+
+        .modal {
+
+            display: none;
+
+            position: fixed;
+
+            z-index: 2000;
+
+            inset: 0;
+
+            background:
+                    rgba(9, 14, 23, 0.8);
+
+            backdrop-filter:
+                    blur(5px);
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+        }
+
+
+        .modal.show {
+
+            display: flex;
+
+            animation:
+                    fadeIn 0.3s ease;
+        }
+
+
+        .modal-content {
+
+            width: 100%;
+
+            max-width: 520px;
+
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 32px;
+
+            border:
+                    1px solid
+                    var(--gold-primary);
+
+            box-shadow:
+                    0 20px 50px
+                    rgba(0,0,0,0.3);
+        }
+
+
+        .link-input-wrapper {
+
+            display: flex;
+
+            gap: 10px;
+
+            margin: 20px 0;
+        }
+
+
+        .link-input-wrapper input {
+
+            flex: 1;
+
+            background:
+                    #f8fafc;
+        }
+
+
+        .copy-link-btn {
+
+            border: none;
+
+            border-radius: 10px;
+
+            padding: 0 20px;
+
+            background:
+                    var(--royal-navy);
+
+            color:
+                    var(--gold-primary);
+
+            border:
+                    1px solid
+                    var(--gold-primary);
+
+            cursor: pointer;
+
+            font-weight: 700;
+
+            transition:
+                    all 0.2s ease;
+        }
+
+
+        .copy-link-btn:hover {
+
+            background:
+                    var(--royal-deep);
+        }
+
+
+        .modal-buttons {
+
+            display: flex;
+
+            gap: 12px;
+        }
+
+
+        .whatsapp-btn,
+        .close-modal-btn {
+
+            flex: 1;
+
+            border: none;
+
+            border-radius: 10px;
+
+            padding: 12px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                    all 0.2s ease;
+        }
+
+
+        .whatsapp-btn {
+
+            background:
+                    #25D366;
+
+            color: white;
+        }
+
+
+        .whatsapp-btn:hover {
+
+            background:
+                    #1eb956;
+        }
+
+
+        .close-modal-btn {
+
+            background:
+                    #f1f5f9;
+
+            color:
+                    var(--text-dark);
+        }
+
+
+        .image-modal-img {
+
+            max-width: 90%;
+
+            max-height: 85vh;
+
+            object-fit: contain;
+
+            border-radius: 12px;
+
+            border:
+                    2px solid
+                    var(--gold-primary);
+
+            box-shadow:
+                    0 0 30px
+                    rgba(212, 175, 55, 0.3);
+
+            animation:
+                    scaleUpModal 0.3s
+                    cubic-bezier(
+                            0.175,
+                            0.885,
+                            0.32,
+                            1.275
+                    );
+        }
+
+
+        .close-image-btn {
+
+            position: absolute;
+
+            top: 25px;
+
+            right: 35px;
+
+            color: white;
+
+            font-size: 36px;
+
+            cursor: pointer;
+        }
+
+
+        /* =====================================================
+           ANIMATIONS
+           ===================================================== */
+
+        @keyframes fadeIn {
+
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+
+        @keyframes scaleUpModal {
+
+            from {
+
+                transform:
+                        scale(0.3);
+
+                opacity: 0;
+            }
+
+            to {
+
+                transform:
+                        scale(1);
+
+                opacity: 1;
+            }
+        }
+
+
+        @keyframes slideDown {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                        translateY(-10px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                        translateY(0);
+            }
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media(max-width:768px) {
+
+            .header {
+
+                padding: 20px;
+            }
+
+
+            .form-grid {
+
+                grid-template-columns:
+                        1fr;
+            }
+
+
+            .form-group.full {
+
+                grid-column:
+                        1;
+            }
+
+
+            .container {
+
+                width: 94%;
+            }
+
+
+            .customer-actions {
+
+                flex-direction: column;
+
+                align-items:
+                        stretch;
+            }
+
+
+            .action-btn {
+
+                width: 100%;
+
+                justify-content:
+                        center;
+            }
+
+
+            .customer-title-group {
+
+                flex-wrap: wrap;
+            }
+
+
+            .link-input-wrapper {
+
+                flex-direction: column;
+            }
+
+
+            .copy-link-btn {
+
+                padding: 12px;
+            }
+
+
+            .modal-buttons {
+
+                flex-direction: column;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
+
+<div class="header">
+
+    <div class="header-title-wrapper">
+
+        <span class="crown-icon">
+            👑
+        </span>
+
+        <h1>
+            Customer Management
+        </h1>
+
+    </div>
+
+
+    <div class="studio-info">
+
+        <span class="studio-label">
+            Studio ID:
+        </span>
+
+
+        <span
+                class="studio-id"
+                th:text="${session.studio_ID}">
+            000
+        </span>
+
+
+        <!-- STUDIO NAME + LOGO -->
+
+        <span class="studio-name-badge">
+
+            <span
+                    class="studio-logo-wrapper"
+                    onclick="openLogoModal(this)"
+                    title="Click to view full logo">
+
+                <img
+                        th:src="@{'/studio_logo/' + ${studio_ID}}"
+                        alt="Studio Logo"
+                        class="studio-logo-img"
+                        onerror="
+                            this.style.display='none';
+                            this.nextElementSibling.style.display='inline-block';
+                        ">
+
+                <span class="studio-logo-fallback">
+                    📷
+                </span>
+
+            </span>
+
+
+            <span th:text="${studio_name}">
+                Studio Name
+            </span>
+
+        </span>
+
+
+        <!-- OWNER -->
+
+        <span class="owner-name">
+
+            👤
+
+            <span th:text="${owner_name}">
+                Owner Name
+            </span>
+
+        </span>
+
+
+        <!-- LOGOUT -->
+
+        <a
+                href="/studio_logout"
+                class="logout-btn">
+
+            Logout
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MAIN
+     ========================================================= -->
+
+<div class="container">
+
+
+    <!-- =====================================================
+         STATS
+         ===================================================== -->
+
+    <div class="stats-bar">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                👥
+            </div>
+
+            <div class="stat-info">
+
+                <h4>
+                    Total Clients
+                </h4>
+
+                <p
+                        th:text="${customers != null ? #lists.size(customers) : 0}">
+                    0
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+                📸
+            </div>
+
+            <div class="stat-info">
+
+                <h4>
+                    Total Uploads
+                </h4>
+
+                <p id="totalPhotosCount">
+                    0
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUCCESS MESSAGE
+         ===================================================== -->
+
+    <div
+            class="success-message"
+            th:if="${param.success}">
+
+        <span>
+            ✓
+        </span>
+
+        Customer added successfully
+        to the gallery.
+
+    </div>
+
+
+    <!-- =====================================================
+         ERROR MESSAGE
+         ===================================================== -->
+
+    <div
+            class="error-message"
+            th:if="${param.error}">
+
+        <span>
+            ✕
+        </span>
+
+        Unable to save customer details.
+        Please try again.
+
+    </div>
+
+
+    <!-- =====================================================
+         ADD CUSTOMER FORM
+         ===================================================== -->
+
+    <div class="form-container">
+
+        <h2>
+            ✨ Register New Client
+        </h2>
+
+
+        <form
+                action="/customer_register"
+                method="post"
+                enctype="multipart/form-data">
+
+
+            <div class="form-grid">
+
+
+                <!-- CUSTOMER NAME -->
+
+                <div class="form-group">
+
+                    <label for="customer_name">
+                        Customer Name
+                    </label>
+
+                    <input
+                            type="text"
+                            id="customer_name"
+                            name="customer_name"
+                            placeholder="e.g. Eleanor Vance"
+                            required>
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Phone Number
+                    </label>
+
+                    <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            class="customer-phone-input"
+                            placeholder="e.g. +1 555-0192"
+                            required>
+
+                </div>
+
+
+                <!-- ADDRESS -->
+
+                <div class="form-group full">
+
+                    <label for="address">
+                        Address
+                    </label>
+
+                    <textarea
+                            id="address"
+                            name="address"
+                            placeholder="Enter residential or venue address..."></textarea>
+
+                </div>
+
+
+                <!-- PHOTOS -->
+
+                <div class="form-group full">
+
+                    <label>
+                        Customer Photos
+                    </label>
+
+
+                    <div
+                            class="file-upload-box"
+                            id="dropzone">
+
+
+                        <div class="upload-icon">
+                            📁
+                        </div>
+
+
+                        <p
+                                style="
+                                color: var(--royal-navy);
+                                font-weight: 600;
+                                margin-bottom: 4px;
+                                ">
+
+                            Drag and drop photos here,
+                            or click to browse
+
+                        </p>
+
+
+                        <p
+                                style="
+                                color: var(--text-muted);
+                                font-size: 12px;
+                                ">
+
+                            Select high-resolution
+                            customer images
+
+                        </p>
+
+
+                        <input
+                                type="file"
+                                id="images"
+                                name="images"
+                                multiple
+                                accept="image/*"
+                                onchange="previewImages(this)">
+
+                    </div>
+
+
+                    <div
+                            class="preview-thumbs"
+                            id="previewContainer">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                    type="submit"
+                    class="submit-btn">
+
+                💾 Save Customer Records
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         CUSTOMER LIST
+         ===================================================== -->
+
+    <div class="section-header">
+
+        <h2 class="section-title">
+            Client Records
+        </h2>
+
+
+        <div class="search-box">
+
+            <span class="search-icon">
+                🔍
+            </span>
+
+            <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by name or phone..."
+                    onkeyup="filterCustomers()">
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         NO CUSTOMERS
+         ===================================================== -->
+
+    <div
+            class="no-customers"
+            th:if="${customers == null || #lists.isEmpty(customers)}">
+
+        <h3>
+            No Client Records Found
+        </h3>
+
+        <p>
+            Start managing your studio workflow
+            by adding your first client above.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         CUSTOMER CARDS
+         ===================================================== -->
+
+    <div
+            th:each="customer : ${customers}"
+            class="customer-card">
+
+
+        <!-- CUSTOMER HEADER -->
+
+        <div
+                class="customer-header"
+                th:onclick="'toggleCustomer('
+                    + ${customer.customer_id}
+                    + ', this)'">
+
+
+            <div class="customer-title-group">
+
+                <h3
+                        class="customer-name"
+                        th:text="${customer.customer_name}">
+
+                    Customer Name
+
+                </h3>
+
+
+                <span
+                        class="photo-badge"
+                        th:text="${customer.images != null
+                            ? #lists.size(customer.images)
+                            : 0} + ' Photos'">
+
+                    0 Photos
+
+                </span>
+
+            </div>
+
+
+            <div class="arrow-btn">
+                ▼
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CUSTOMER INFORMATION
+             ================================================= -->
+
+        <div class="customer-info">
+
+
+            <div class="info-item">
+
+                <label>
+                    Client ID
+                </label>
+
+                <span
+                        th:text="'#' + ${customer.customer_id}">
+
+                    #0
+
+                </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <label>
+                    Phone
+                </label>
+
+                <span
+                        class="customer-phone"
+                        th:text="${customer.phone}">
+
+                    Phone
+
+                </span>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <label>
+                    Address
+                </label>
+
+                <span
+                        th:text="${customer.address != null
+                            && !customer.address.isEmpty()
+                            ? customer.address
+                            : 'N/A'}">
+
+                    Address
+
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             CUSTOMER IMAGES
+             ================================================= -->
+
+        <div
+                th:id="'images-' + ${customer.customer_id}"
+                class="customer-images">
+
+
+            <h4 class="images-title">
+                📸 Uploaded Gallery
+            </h4>
+
+
+            <div
+                    class="images-grid"
+                    th:if="${customer.images != null
+                        && !#lists.isEmpty(customer.images)}">
+
+
+                <div
+                        th:each="image : ${customer.images}"
+                        class="image-box">
+
+
+                    <img
+                            th:src="@{'/customer_image/' + ${image.image_id}}"
+                            th:alt="${image.image_name}"
+                            onclick="openImageModal(this.src)">
+
+                </div>
+
+            </div>
+
+
+            <div
+                    class="no-image"
+                    th:if="${customer.images == null
+                        || #lists.isEmpty(customer.images)}">
+
+                No images uploaded for this client yet.
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ACTION BUTTONS
+             ================================================= -->
+
+        <div class="customer-actions">
+
+
+            <!-- SHARE LINK -->
+
+            <button
+                    type="button"
+                    class="action-btn generate-link-btn"
+                    th:attr="data-customer-id=${customer.customer_id}"
+                    onclick="generateSelectionLink(this)">
+
+                🔗 Share Link
+
+            </button>
+
+
+            <!-- SELECTIONS -->
+
+            <a
+                    class="action-btn selection-btn"
+                    th:href="@{'/customer_selection_manage/' + ${customer.customer_id}}">
+
+                📷 Selections
+
+            </a>
+
+
+            <!-- ALBUMS -->
+
+            <a
+                    class="action-btn albums-btn"
+                    th:href="@{'/customer_albums/' + ${customer.customer_id}}">
+
+                📚 Albums
+
+            </a>
+
+
+            <!-- DELETE -->
+
+            <form
+                    th:action="@{'/customer_delete/' + ${customer.customer_id}}"
+                    method="post"
+                    onsubmit="return confirmDelete();">
+
+
+                <button
+                        type="submit"
+                        class="action-btn delete-btn">
+
+                    🗑 Delete
+
+                </button>
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     LINK GENERATION MODAL
+     ========================================================= -->
+
+<div
+        id="linkModal"
+        class="modal"
+        onclick="closeLinkModal(event)">
+
+
+    <div
+            class="modal-content"
+            onclick="event.stopPropagation()">
+
+
+        <h2
+                style="
+                color: var(--royal-navy);
+                font-size: 20px;
+                ">
+
+            👑 Selection Portal Link
+
+        </h2>
+
+
+        <p
+                style="
+                color: var(--text-muted);
+                font-size: 14px;
+                margin-top: 6px;
+                ">
+
+            Share this custom link with your
+            client to begin photo selection.
+
+        </p>
+
+
+        <div class="link-input-wrapper">
+
+            <input
+                    type="text"
+                    id="generatedLink"
+                    readonly>
+
+
+            <button
+                    type="button"
+                    class="copy-link-btn"
+                    onclick="copySelectionLink()">
+
+                Copy
+
+            </button>
+
+        </div>
+
+
+        <div class="modal-buttons">
+
+
+            <button
+                    type="button"
+                    class="whatsapp-btn"
+                    onclick="shareWhatsApp()">
+
+                💬 WhatsApp
+
+            </button>
+
+
+            <button
+                    type="button"
+                    class="close-modal-btn"
+                    onclick="closeLinkModal()">
+
+                Close
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     IMAGE LIGHTBOX
+     ========================================================= -->
+
+<div
+        id="imageModal"
+        class="modal"
+        onclick="closeImageModal(event)">
+
+
+    <span
+            class="close-image-btn"
+            onclick="closeImageModal()">
+
+        &times;
+
+    </span>
+
+
+    <img
+            id="modalImage"
+            class="image-modal-img"
+            src=""
+            alt="Client Photo">
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+    let activeCustomerPhone = "";
+
+
+    // =====================================================
+    // 1. CALCULATE TOTAL PHOTOS
+    // =====================================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
+
+            let totalPhotos = 0;
+
+
+            document
+                .querySelectorAll(".photo-badge")
+                .forEach(badge => {
+
+                    const count =
+                        parseInt(
+                            badge.textContent
+                        ) || 0;
+
+                    totalPhotos += count;
+                });
+
+
+            const totalPhotosElement =
+                document.getElementById(
+                    "totalPhotosCount"
+                );
+
+
+            if (totalPhotosElement) {
+
+                totalPhotosElement.textContent =
+                    totalPhotos;
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // 2. CUSTOMER IMAGE ACCORDION
+    // =====================================================
+
+    function toggleCustomer(
+        customerId,
+        element
+    ) {
+
+        const imageSection =
+            document.getElementById(
+                "images-" + customerId
+            );
+
+
+        if (!imageSection) {
+            return;
+        }
+
+
+        imageSection.classList.toggle(
+            "show"
+        );
+
+
+        const arrow =
+            element.querySelector(
+                ".arrow-btn"
+            );
+
+
+        if (arrow) {
+
+            arrow.classList.toggle(
+                "rotate"
+            );
+        }
+    }
+
+
+    // =====================================================
+    // 3. IMAGE PREVIEW
+    // =====================================================
+
+    function previewImages(input) {
+
+        const container =
+            document.getElementById(
+                "previewContainer"
+            );
+
+
+        if (!container) {
+            return;
+        }
+
+
+        container.innerHTML = "";
+
+
+        if (!input.files) {
+            return;
+        }
+
+
+        Array.from(input.files)
+            .forEach(file => {
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    function(event) {
+
+                        const img =
+                            document.createElement(
+                                "img"
+                            );
+
+
+                        img.src =
+                            event.target.result;
+
+
+                        img.className =
+                            "preview-thumb";
+
+
+                        container.appendChild(
+                            img
+                        );
+                    };
+
+
+                reader.readAsDataURL(file);
+
+            });
+    }
+
+
+    // =====================================================
+    // 4. DRAG & DROP
+    // =====================================================
+
+    const dropzone =
+        document.getElementById(
+            "dropzone"
+        );
+
+
+    if (dropzone) {
+
+
+        [
+            "dragenter",
+            "dragover"
+        ].forEach(
+            eventName => {
+
+                dropzone.addEventListener(
+                    eventName,
+                    event => {
+
+                        event.preventDefault();
+
+                        event.stopPropagation();
+
+                        dropzone.classList.add(
+                            "dragover"
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        [
+            "dragleave",
+            "drop"
+        ].forEach(
+            eventName => {
+
+                dropzone.addEventListener(
+                    eventName,
+                    event => {
+
+                        event.preventDefault();
+
+                        event.stopPropagation();
+
+                        dropzone.classList.remove(
+                            "dragover"
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        dropzone.addEventListener(
+            "drop",
+            event => {
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+
+                const fileInput =
+                    document.getElementById(
+                        "images"
+                    );
+
+
+                if (
+                    fileInput &&
+                    event.dataTransfer.files.length
+                ) {
+
+                    fileInput.files =
+                        event.dataTransfer.files;
+
+
+                    previewImages(
+                        fileInput
+                    );
+                }
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // 5. SEARCH CUSTOMERS
+    // =====================================================
+
+    function filterCustomers() {
+
+        const input =
+            document.getElementById(
+                "searchInput"
+            );
+
+
+        if (!input) {
+            return;
+        }
+
+
+        const query =
+            input.value
+                .toLowerCase()
+                .trim();
+
+
+        document
+            .querySelectorAll(
+                ".customer-card"
+            )
+            .forEach(card => {
+
+                const nameElement =
+                    card.querySelector(
+                        ".customer-name"
+                    );
+
+
+                const phoneElement =
+                    card.querySelector(
+                        ".customer-phone"
+                    );
+
+
+                const name =
+                    nameElement
+                        ? nameElement.textContent
+                            .toLowerCase()
+                        : "";
+
+
+                const phone =
+                    phoneElement
+                        ? phoneElement.textContent
+                            .toLowerCase()
+                        : "";
+
+
+                if (
+                    name.includes(query) ||
+                    phone.includes(query)
+                ) {
+
+                    card.style.display =
+                        "block";
+
+                } else {
+
+                    card.style.display =
+                        "none";
+                }
+
+            });
+    }
+
+
+    // =====================================================
+    // 6. OPEN STUDIO LOGO
+    // =====================================================
+
+    function openLogoModal(
+        wrapperElement
+    ) {
+
+        const logoImg =
+            wrapperElement.querySelector(
+                ".studio-logo-img"
+            );
+
+
+        if (
+            logoImg &&
+            logoImg.style.display !== "none" &&
+            logoImg.src
+        ) {
+
+            openImageModal(
+                logoImg.src
+            );
+        }
+    }
+
+
+    // =====================================================
+    // 7. IMAGE LIGHTBOX
+    // =====================================================
+
+    function openImageModal(src) {
+
+        const modal =
+            document.getElementById(
+                "imageModal"
+            );
+
+
+        const modalImg =
+            document.getElementById(
+                "modalImage"
+            );
+
+
+        if (!modal || !modalImg) {
+            return;
+        }
+
+
+        modalImg.src = src;
+
+        modal.classList.add(
+            "show"
+        );
+    }
+
+
+    function closeImageModal(event) {
+
+        if (
+            event &&
+            event.target &&
+            event.target.id !== "imageModal" &&
+            !event.target.classList.contains(
+                "close-image-btn"
+            )
+        ) {
+
+            return;
+        }
+
+
+        const modal =
+            document.getElementById(
+                "imageModal"
+            );
+
+
+        const modalImg =
+            document.getElementById(
+                "modalImage"
+            );
+
+
+        if (modal) {
+
+            modal.classList.remove(
+                "show"
+            );
+        }
+
+
+        if (modalImg) {
+
+            modalImg.src = "";
+        }
+    }
+
+
+    // =====================================================
+    // 8. GENERATE CUSTOMER SELECTION LINK
+    // =====================================================
+    //
+    // IMPORTANT:
+    // Do NOT create:
+    // /selection/{customerId}
+    //
+    // The backend must generate the tokenized URL:
+    // /customer_selection_link/{token}
+    // =====================================================
+
+    function generateSelectionLink(
+        button
+    ) {
+
+        const customerId =
+            button.getAttribute(
+                "data-customer-id"
+            );
+
+
+        if (!customerId) {
+
+            alert(
+                "Customer ID is missing."
+            );
+
+            return;
+        }
+
+
+        // Get customer card
+        const card =
+            button.closest(
+                ".customer-card"
+            );
+
+
+        // Get customer phone
+        if (card) {
+
+            const phoneElement =
+                card.querySelector(
+                    ".customer-phone"
+                );
+
+
+            if (phoneElement) {
+
+                activeCustomerPhone =
+                    phoneElement
+                        .textContent
+                        .trim();
+            }
+        }
+
+
+        // Disable button while loading
+        button.disabled = true;
+
+        button.innerHTML =
+            "⏳ Generating...";
+
+
+        // =================================================
+        // CALL SPRING BOOT
+        // =================================================
+
+        fetch(
+            "/generate_selection_link/" +
+            encodeURIComponent(
+                customerId
+            ),
+            {
+                method: "POST",
+
+                headers: {
+                    "Accept":
+                        "application/json"
+                }
+            }
+        )
+
+
+            .then(response => {
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Server returned HTTP " +
+                        response.status
+                    );
+                }
+
+
+                return response.json();
+
+            })
+
+
+            .then(data => {
+
+                console.log(
+                    "Selection link response:",
+                    data
+                );
+
+
+                // =================================================
+                // SUCCESS
+                // =================================================
+
+                if (data.success) {
+
+                    const generatedLink =
+                        data.link;
+
+
+                    if (
+                        !generatedLink
+                    ) {
+
+                        throw new Error(
+                            "Backend did not return a link."
+                        );
+                    }
+
+
+                    const linkInput =
+                        document.getElementById(
+                            "generatedLink"
+                        );
+
+
+                    if (linkInput) {
+
+                        linkInput.value =
+                            generatedLink;
+                    }
+
+
+                    // Show modal
+                    const modal =
+                        document.getElementById(
+                            "linkModal"
+                        );
+
+
+                    if (modal) {
+
+                        modal.classList.add(
+                            "show"
+                        );
+                    }
+
+
+                } else {
+
+                    alert(
+                        data.message ||
+                        "Unable to generate selection link."
+                    );
+                }
+
+            })
+
+
+            .catch(error => {
+
+                console.error(
+                    "Selection link error:",
+                    error
+                );
+
+
+                alert(
+                    "Unable to generate selection link.\n\n" +
+                    error.message
+                );
+
+            })
+
+
+            .finally(() => {
+
+                button.disabled = false;
+
+                button.innerHTML =
+                    "🔗 Share Link";
+            });
+
+    }
+
+
+    // =====================================================
+    // 9. CLOSE LINK MODAL
+    // =====================================================
+
+    function closeLinkModal(event) {
+
+        if (
+            event &&
+            event.target &&
+            event.target.id !== "linkModal" &&
+            !event.target.classList.contains(
+                "close-modal-btn"
+            )
+        ) {
+
+            return;
+        }
+
+
+        const modal =
+            document.getElementById(
+                "linkModal"
+            );
+
+
+        if (modal) {
+
+            modal.classList.remove(
+                "show"
+            );
+        }
+    }
+
+
+    // =====================================================
+    // 10. COPY LINK
+    // =====================================================
+
+    function copySelectionLink() {
+
+        const input =
+            document.getElementById(
+                "generatedLink"
+            );
+
+
+        if (!input ||
+            !input.value) {
+
+            alert(
+                "No selection link available."
+            );
+
+            return;
+        }
+
+
+        // Modern clipboard API
+        if (
+            navigator.clipboard &&
+            window.isSecureContext
+        ) {
+
+            navigator.clipboard
+                .writeText(input.value)
+                .then(() => {
+
+                    alert(
+                        "Selection link copied to clipboard!"
+                    );
+
+                })
+                .catch(() => {
+
+                    fallbackCopy(input);
+                });
+
+
+        } else {
+
+            fallbackCopy(input);
+        }
+
+    }
+
+
+    // =====================================================
+    // FALLBACK COPY
+    // =====================================================
+
+    function fallbackCopy(input) {
+
+        input.focus();
+
+        input.select();
+
+        input.setSelectionRange(
+            0,
+            99999
+        );
+
+
+        try {
+
+            document.execCommand(
+                "copy"
+            );
+
+
+            alert(
+                "Selection link copied to clipboard!"
+            );
+
+        } catch (error) {
+
+            alert(
+                "Please manually copy the link."
+            );
+        }
+    }
+
+
+    // =====================================================
+    // 11. WHATSAPP SHARE
+    // =====================================================
+
+    function shareWhatsApp() {
+
+        const input =
+            document.getElementById(
+                "generatedLink"
+            );
+
+
+        if (!input ||
+            !input.value) {
+
+            alert(
+                "No selection link available."
+            );
+
+            return;
+        }
+
+
+        const link =
+            input.value;
+
+
+        const message =
+            "Hello! Here is your custom photo " +
+            "selection link from Royal Studio Suite:\n\n" +
+            link;
+
+
+        const text =
+            encodeURIComponent(
+                message
+            );
+
+
+        // Clean phone number
+        const phone =
+            activeCustomerPhone
+                .replace(
+                    /[^0-9]/g,
+                    ""
+                );
+
+
+        // =================================================
+        // WITH PHONE NUMBER
+        // =================================================
+
+        if (phone.length > 0) {
+
+            window.open(
+                "https://wa.me/" +
+                phone +
+                "?text=" +
+                text,
+                "_blank"
+            );
+
+
+        } else {
+
+            // =================================================
+            // WITHOUT PHONE NUMBER
+            // =================================================
+
+            window.open(
+                "https://wa.me/?text=" +
+                text,
+                "_blank"
+            );
+        }
+    }
+
+
+    // =====================================================
+    // 12. DELETE CONFIRMATION
+    // =====================================================
+
+    function confirmDelete() {
+
+        return confirm(
+            "Are you sure you want to permanently " +
+            "delete this client record?"
+        );
+    }
+
+
+    // =====================================================
+    // 13. ESC KEY
+    // =====================================================
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                closeImageModal();
+
+                closeLinkModal();
+            }
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
+

@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Photo Selection</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+
+        .container {
+            width: 94%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        /* ================= HEADER ================= */
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,.08);
+        }
+
+        .header h1 {
+            margin: 0 0 10px;
+        }
+
+        .header p {
+            color: #666;
+            margin: 8px 0;
+        }
+
+        /* ================= UPLOAD SECTION ================= */
+
+        .upload-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0,0,0,.08);
+            text-align: center;
+        }
+
+        .upload-section h2 {
+            margin: 0 0 8px;
+            color: #333;
+        }
+
+        .upload-description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .upload-box {
+            border: 2px dashed #007bff;
+            border-radius: 12px;
+            padding: 30px 20px;
+            background: #f8fbff;
+            transition: .2s;
+        }
+
+        .upload-box:hover {
+            background: #eef7ff;
+        }
+
+        .upload-box input[type="file"] {
+            display: none;
+        }
+
+        .upload-label {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 13px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .upload-label:hover {
+            background: #0056b3;
+        }
+
+        .upload-box p {
+            margin: 15px 0 0;
+            color: #777;
+            font-size: 14px;
+        }
+
+        /* ================= IMAGE PREVIEW ================= */
+
+        .preview-container {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fill, minmax(150px, 1fr));
+
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .preview-item {
+            position: relative;
+            background: #fff;
+            border-radius: 10px;
+            padding: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.1);
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 7px;
+            display: block;
+        }
+
+        .preview-name {
+            font-size: 12px;
+            color: #555;
+            margin-top: 6px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        /* ================= UPLOAD BUTTON ================= */
+
+        .upload-btn {
+            border: none;
+            background: #28a745;
+            color: white;
+            padding: 13px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .upload-btn:hover {
+            background: #218838;
+        }
+
+        .upload-btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .upload-message {
+            margin-top: 15px;
+            font-weight: bold;
+            display: none;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .upload-message.show {
+            display: block;
+        }
+
+        .upload-message.success-message {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .upload-message.error-message {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* ================= GALLERY ================= */
+
+        .gallery {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fill, minmax(220px, 1fr));
+
+            gap: 20px;
+        }
+
+        .photo {
+            position: relative;
+
+            background: white;
+
+            padding: 8px;
+
+            border-radius: 12px;
+
+            box-shadow: 0 3px 10px rgba(0,0,0,.1);
+
+            cursor: pointer;
+
+            transition: .2s;
+        }
+
+        .photo:hover {
+            transform: translateY(-3px);
+        }
+
+        .photo img {
+            width: 100%;
+            height: 220px;
+
+            object-fit: cover;
+
+            border-radius: 8px;
+
+            display: block;
+        }
+
+        /* ================= SELECTED ================= */
+
+        .photo.selected {
+            outline: 5px solid #007bff;
+        }
+
+        .check {
+            position: absolute;
+
+            top: 15px;
+            right: 15px;
+
+            width: 30px;
+            height: 30px;
+
+            border-radius: 50%;
+
+            background: white;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            font-size: 18px;
+
+            color: transparent;
+
+            box-shadow: 0 2px 6px rgba(0,0,0,.2);
+        }
+
+        .photo.selected .check {
+            background: #007bff;
+            color: white;
+        }
+
+        /* ================= BOTTOM ================= */
+
+        .bottom {
+            position: sticky;
+
+            bottom: 0;
+
+            background: white;
+
+            padding: 15px;
+
+            margin-top: 25px;
+
+            border-radius: 12px;
+
+            box-shadow: 0 -3px 15px rgba(0,0,0,.15);
+
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 15px;
+
+            z-index: 100;
+        }
+
+        .selected-text {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .save-btn {
+            border: none;
+
+            background: #007bff;
+
+            color: white;
+
+            padding: 13px 25px;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+            background: #0056b3;
+        }
+
+        .save-btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        /* ================= ERROR ================= */
+
+        .error {
+            background: #f8d7da;
+
+            color: #721c24;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            text-align: center;
+        }
+
+        /* ================= SUCCESS ================= */
+
+        .success {
+            background: #d4edda;
+
+            color: #155724;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            text-align: center;
+
+            display: none;
+        }
+
+        .success.show {
+            display: block;
+        }
+
+        /* ================= NO PHOTOS ================= */
+
+        .no-photos {
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 12px;
+
+            text-align: center;
+
+            box-shadow: 0 3px 10px rgba(0,0,0,.08);
+
+            color: #777;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media(max-width:600px) {
+
+            .container {
+                width: 94%;
+                margin: 20px auto;
+            }
+
+            .gallery {
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                gap: 10px;
+            }
+
+            .photo img {
+                height: 160px;
+            }
+
+            .bottom {
+                flex-direction: column;
+            }
+
+            .save-btn {
+                width: 100%;
+            }
+
+            .upload-section {
+                padding: 20px 15px;
+            }
+
+            .preview-container {
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                gap: 10px;
+            }
+
+            .preview-item img {
+                height: 120px;
+            }
+
+            .upload-btn {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <!-- =====================================================
+         ERROR
+         ===================================================== -->
+
+    <div class="error"
+         th:if="${error != null}"
+         th:text="${error}">
+
+        Invalid or expired selection link.
+
+    </div>
+
+
+    <!-- =====================================================
+         CUSTOMER HEADER
+         ===================================================== -->
+
+    <div class="header"
+         th:if="${customer != null}">
+
+        <h1>
+            📷 Photo Selection
+        </h1>
+
+        <p>
+
+            Hello
+
+            <strong
+                    th:text="${customer.customer_name}">
+                Customer
+            </strong>
+
+        </p>
+
+        <p>
+            Select your favorite photos below.
+        </p>
+
+        <p>
+            Click on a photo to select or unselect it.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         IMAGE UPLOAD SECTION
+         ===================================================== -->
+
+    <div class="upload-section"
+         th:if="${customer != null}">
+
+        <h2>
+            📤 Upload Photos
+        </h2>
+
+        <p class="upload-description">
+            Select one or more photos to upload.
+        </p>
+
+        <form id="imageUploadForm"
+              enctype="multipart/form-data">
+
+            <div class="upload-box">
+
+                <input
+                        type="file"
+                        id="imageFiles"
+                        name="photos"
+                        accept="image/jpeg,image/png,image/webp"
+                        multiple
+                        onchange="previewImages(this)">
+
+                <label
+                        for="imageFiles"
+                        class="upload-label">
+
+                    📷 Choose Images
+
+                </label>
+
+                <p>
+                    JPG, PNG or WEBP
+                </p>
+
+            </div>
+
+
+            <!-- IMAGE PREVIEW -->
+
+            <div
+                    id="previewContainer"
+                    class="preview-container">
+            </div>
+
+
+            <!-- UPLOAD BUTTON -->
+
+            <button
+                    type="button"
+                    id="uploadButton"
+                    class="upload-btn"
+                    onclick="uploadImages()">
+
+                📤 Upload Images
+
+            </button>
+
+        </form>
+
+
+        <!-- UPLOAD MESSAGE -->
+
+        <div
+                id="uploadMessage"
+                class="upload-message">
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUCCESS MESSAGE
+         ===================================================== -->
+
+    <div id="successMessage"
+         class="success">
+
+        ✅ Your photo selection has been saved successfully!
+
+    </div>
+
+
+    <!-- =====================================================
+         PHOTO GALLERY
+         ===================================================== -->
+
+    <div class="gallery"
+         th:if="${customer != null && images != null && !#lists.isEmpty(images)}">
+
+
+        <div class="photo"
+             th:each="image : ${images}"
+             th:attr="data-image-id=${image.image_id}"
+             onclick="togglePhoto(this)">
+
+
+            <img
+                    th:src="@{'/customer_image/' + ${image.image_id}}"
+                    th:alt="${image.image_name}">
+
+
+            <div class="check">
+                ✓
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =====================================================
+         NO IMAGES
+         ===================================================== -->
+
+    <div class="no-photos"
+         th:if="${customer != null && (images == null || #lists.isEmpty(images))}">
+
+        <h2>
+            📷 No Photos Available
+        </h2>
+
+        <p>
+            There are currently no photos available for selection.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         SAVE SECTION
+         ===================================================== -->
+
+    <div class="bottom"
+         th:if="${customer != null && images != null && !#lists.isEmpty(images)}">
+
+
+        <div class="selected-text">
+
+            Selected:
+
+            <strong id="selectedCount">
+                0
+            </strong>
+
+            photos
+
+        </div>
+
+
+        <button
+                type="button"
+                id="saveButton"
+                class="save-btn"
+                onclick="saveSelection()">
+
+            💾 Save Selection
+
+        </button>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
+<script th:inline="javascript">
+
+
+    /* =====================================================
+       GET TOKEN FROM THYMELEAF
+       ===================================================== */
+
+    const selectionToken =
+        /*[[${customer != null ? customer.token : ''}]]*/ "";
+
+
+
+    console.log(
+        "Selection Token:",
+        selectionToken
+    );
+
+
+
+    /* =====================================================
+       IMAGE PREVIEW
+       ===================================================== */
+
+    function previewImages(input) {
+
+        const previewContainer =
+            document.getElementById(
+                "previewContainer"
+            );
+
+
+        if (!previewContainer) {
+            return;
+        }
+
+
+        previewContainer.innerHTML = "";
+
+
+        if (!input.files || input.files.length === 0) {
+            return;
+        }
+
+
+        Array.from(input.files).forEach(
+            function(file) {
+
+
+                if (!file.type.startsWith("image/")) {
+                    return;
+                }
+
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    function(event) {
+
+
+                        const previewItem =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        previewItem.className =
+                            "preview-item";
+
+
+                        const image =
+                            document.createElement(
+                                "img"
+                            );
+
+
+                        image.src =
+                            event.target.result;
+
+
+                        image.alt =
+                            file.name;
+
+
+                        const fileName =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        fileName.className =
+                            "preview-name";
+
+
+                        fileName.innerText =
+                            file.name;
+
+
+                        previewItem.appendChild(
+                            image
+                        );
+
+
+                        previewItem.appendChild(
+                            fileName
+                        );
+
+
+                        previewContainer.appendChild(
+                            previewItem
+                        );
+
+                    };
+
+
+                reader.readAsDataURL(file);
+
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       UPLOAD IMAGES
+       ===================================================== */
+
+    async function uploadImages() {
+
+
+        /* ---------------------------------------------
+           CHECK TOKEN
+           --------------------------------------------- */
+
+        if (!selectionToken) {
+
+            alert(
+                "Invalid selection link."
+            );
+
+            return;
+
+        }
+
+
+        /* ---------------------------------------------
+           GET FILE INPUT
+           --------------------------------------------- */
+
+        const imageInput =
+            document.getElementById(
+                "imageFiles"
+            );
+
+
+        if (!imageInput) {
+
+            alert(
+                "Image upload field not found."
+            );
+
+            return;
+
+        }
+
+
+        /* ---------------------------------------------
+           CHECK FILES
+           --------------------------------------------- */
+
+        if (!imageInput.files ||
+            imageInput.files.length === 0) {
+
+            alert(
+                "Please select at least one image."
+            );
+
+            return;
+
+        }
+
+
+        /* ---------------------------------------------
+           CREATE FORM DATA
+           --------------------------------------------- */
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "token",
+            selectionToken
+        );
+
+
+        Array.from(imageInput.files).forEach(
+            function(file) {
+
+                formData.append(
+                    "photos",
+                    file
+                );
+
+            }
+        );
+
+
+        /* ---------------------------------------------
+           DISABLE BUTTON
+           --------------------------------------------- */
+
+        const uploadButton =
+            document.getElementById(
+                "uploadButton"
+            );
+
+
+        if (uploadButton) {
+
+            uploadButton.disabled =
+                true;
+
+            uploadButton.innerText =
+                "⏳ Uploading...";
+
+        }
+
+
+        /* ---------------------------------------------
+           MESSAGE
+           --------------------------------------------- */
+
+        const uploadMessage =
+            document.getElementById(
+                "uploadMessage"
+            );
+
+
+        if (uploadMessage) {
+
+            uploadMessage.className =
+                "upload-message";
+
+            uploadMessage.innerText =
+                "";
+
+        }
+
+
+        try {
+
+
+            /* -----------------------------------------
+               SEND TO SPRING BOOT
+               ----------------------------------------- */
+
+            const response =
+                await fetch(
+                    "/upload_customer_images",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            /* -----------------------------------------
+               CHECK HTTP RESPONSE
+               ----------------------------------------- */
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Server returned HTTP " +
+                    response.status
+                );
+
+            }
+
+
+            /* -----------------------------------------
+               READ JSON
+               ----------------------------------------- */
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "Upload response:",
+                data
+            );
+
+
+            /* -----------------------------------------
+               SUCCESS
+               ----------------------------------------- */
+
+            if (data.success) {
+
+
+                if (uploadMessage) {
+
+                    uploadMessage.className =
+                        "upload-message success-message show";
+
+                    uploadMessage.innerText =
+                        data.message ||
+                        "Images uploaded successfully!";
+
+                }
+
+
+                alert(
+                    data.message ||
+                    "Images uploaded successfully!"
+                );
+
+
+                /* Clear selected files */
+
+                imageInput.value = "";
+
+
+                const previewContainer =
+                    document.getElementById(
+                        "previewContainer"
+                    );
+
+
+                if (previewContainer) {
+
+                    previewContainer.innerHTML =
+                        "";
+
+                }
+
+
+                /*
+                 * Reload the page so the newly
+                 * uploaded images appear in gallery.
+                 */
+
+                setTimeout(
+                    function() {
+                        window.location.reload();
+                    },
+                    800
+                );
+
+
+            } else {
+
+
+                if (uploadMessage) {
+
+                    uploadMessage.className =
+                        "upload-message error-message show";
+
+                    uploadMessage.innerText =
+                        data.message ||
+                        "Unable to upload images.";
+
+                }
+
+
+                alert(
+                    data.message ||
+                    "Unable to upload images."
+                );
+
+            }
+
+
+        } catch (error) {
+
+
+            console.error(
+                "Image upload error:",
+                error
+            );
+
+
+            if (uploadMessage) {
+
+                uploadMessage.className =
+                    "upload-message error-message show";
+
+                uploadMessage.innerText =
+                    "Unable to upload images. Please try again.";
+
+            }
+
+
+            alert(
+                "Unable to upload images. Please try again."
+            );
+
+
+        } finally {
+
+
+            /* -----------------------------------------
+               ENABLE BUTTON
+               ----------------------------------------- */
+
+            if (uploadButton) {
+
+                uploadButton.disabled =
+                    false;
+
+                uploadButton.innerText =
+                    "📤 Upload Images";
+
+            }
+
+        }
+
+    }
+
+
+
+    /* =====================================================
+       TOGGLE PHOTO
+       ===================================================== */
+
+    function togglePhoto(photo) {
+
+        if (!photo) {
+            return;
+        }
+
+
+        photo.classList.toggle(
+            "selected"
+        );
+
+
+        updateCount();
+
+    }
+
+
+
+    /* =====================================================
+       UPDATE SELECTED COUNT
+       ===================================================== */
+
+    function updateCount() {
+
+        const selectedPhotos =
+            document.querySelectorAll(
+                ".photo.selected"
+            );
+
+
+        const count =
+            selectedPhotos.length;
+
+
+        const countElement =
+            document.getElementById(
+                "selectedCount"
+            );
+
+
+        if (countElement) {
+
+            countElement.innerText =
+                count;
+
+        }
+
+    }
+
+
+
+    /* =====================================================
+       SAVE SELECTION
+       ===================================================== */
+
+    async function saveSelection() {
+
+
+        /* ---------------------------------------------
+           CHECK TOKEN
+           --------------------------------------------- */
+
+        if (!selectionToken) {
+
+            alert(
+                "Invalid selection link."
+            );
+
+            return;
+
+        }
+
+
+        /* ---------------------------------------------
+           GET SELECTED PHOTOS
+           --------------------------------------------- */
+
+        const selectedPhotos =
+            document.querySelectorAll(
+                ".photo.selected"
+            );
+
+
+        const imageIds = [];
+
+
+        selectedPhotos.forEach(
+            function(photo) {
+
+                const imageId =
+                    photo.getAttribute(
+                        "data-image-id"
+                    );
+
+
+                if (imageId) {
+
+                    imageIds.push(
+                        imageId
+                    );
+
+                }
+
+            }
+        );
+
+
+        console.log(
+            "Selected image IDs:",
+            imageIds
+        );
+
+
+        /* ---------------------------------------------
+           CREATE FORM DATA
+           --------------------------------------------- */
+
+        const formData =
+            new URLSearchParams();
+
+
+        formData.append(
+            "token",
+            selectionToken
+        );
+
+
+        imageIds.forEach(
+            function(imageId) {
+
+                formData.append(
+                    "image_ids",
+                    imageId
+                );
+
+            }
+        );
+
+
+        /* ---------------------------------------------
+           DISABLE BUTTON
+           --------------------------------------------- */
+
+        const saveButton =
+            document.getElementById(
+                "saveButton"
+            );
+
+
+        if (saveButton) {
+
+            saveButton.disabled =
+                true;
+
+            saveButton.innerText =
+                "⏳ Saving...";
+
+        }
+
+
+        try {
+
+
+            /* -----------------------------------------
+               SEND TO SPRING BOOT
+               ----------------------------------------- */
+
+            const response =
+                await fetch(
+                    "/save_customer_selection",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+
+                        },
+
+                        body: formData
+
+                    }
+                );
+
+
+            /* -----------------------------------------
+               CHECK HTTP RESPONSE
+               ----------------------------------------- */
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Server returned HTTP " +
+                    response.status
+                );
+
+            }
+
+
+            /* -----------------------------------------
+               READ JSON
+               ----------------------------------------- */
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "Server response:",
+                data
+            );
+
+
+            /* -----------------------------------------
+               SUCCESS
+               ----------------------------------------- */
+
+            if (data.success) {
+
+
+                const successMessage =
+                    document.getElementById(
+                        "successMessage"
+                    );
+
+
+                if (successMessage) {
+
+                    successMessage.classList.add(
+                        "show"
+                    );
+
+                }
+
+
+                alert(
+                    data.message ||
+                    "Your photo selection has been saved successfully!"
+                );
+
+
+            } else {
+
+
+                alert(
+                    data.message ||
+                    "Unable to save selection."
+                );
+
+            }
+
+
+        } catch (error) {
+
+
+            console.error(
+                "Save selection error:",
+                error
+            );
+
+
+            alert(
+                "Unable to save your selection. Please try again."
+            );
+
+
+        } finally {
+
+
+            /* -----------------------------------------
+               ENABLE BUTTON
+               ----------------------------------------- */
+
+            if (saveButton) {
+
+                saveButton.disabled =
+                    false;
+
+                saveButton.innerText =
+                    "💾 Save Selection";
+
+            }
+
+        }
+
+    }
+
+
+</script>
+
+
+</body>
+
+</html>

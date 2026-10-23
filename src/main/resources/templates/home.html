@@ -1,0 +1,2907 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Studio Admin Dashboard</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Razorpay Checkout -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            background: #0b132b;
+
+            background-image:
+                    radial-gradient(
+                            at 0% 0%,
+                            rgba(29, 15, 52, 0.8) 0px,
+                            transparent 50%
+                    ),
+                    radial-gradient(
+                            at 100% 100%,
+                            rgba(30, 58, 138, 0.3) 0px,
+                            transparent 50%
+                    );
+
+            background-attachment: fixed;
+
+            color: #f8fafc;
+
+            min-height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .header {
+
+            background: rgba(15, 23, 42, 0.85);
+
+            backdrop-filter: blur(12px);
+
+            border-bottom:
+                    1px solid rgba(212, 175, 55, 0.2);
+
+            padding: 16px 40px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+        }
+
+
+        .header-brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+
+        .brand-icon {
+
+            width: 40px;
+
+            height: 40px;
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #d4af37 0%,
+                            #aa771c 100%
+                    );
+
+            border-radius: 10px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #0d1321;
+
+            font-size: 20px;
+        }
+
+
+        .header h1 {
+
+            font-size: 20px;
+
+            font-weight: 700;
+
+            color: #f8fafc;
+        }
+
+
+        .user-info {
+
+            font-size: 14px;
+
+            color: #94a3b8;
+
+            background:
+                    rgba(30, 41, 59, 0.6);
+
+            padding: 8px 16px;
+
+            border-radius: 20px;
+
+            border:
+                    1px solid rgba(255, 255, 255, 0.08);
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+        }
+
+
+        .user-info strong {
+
+            color: #f3e5ab;
+        }
+
+
+        /* =====================================================
+           CONTAINER
+        ===================================================== */
+
+        .container {
+
+            width: 92%;
+
+            max-width: 1280px;
+
+            margin: 35px auto;
+
+            flex: 1;
+        }
+
+
+        /* =====================================================
+           TOP SECTION
+        ===================================================== */
+
+        .top-section {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 15px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .top-section h2 {
+
+            font-size: 26px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .top-section h2 i {
+
+            color: #d4af37;
+        }
+
+
+        .button-group {
+
+            display: flex;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+        }
+
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .btn {
+
+            border: none;
+
+            padding: 12px 20px;
+
+            border-radius: 10px;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            transition: all 0.3s ease;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+        }
+
+
+        .add-btn {
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #d4af37 0%,
+                            #aa771c 100%
+                    );
+
+            color: #0f172a;
+        }
+
+
+        .add-btn:hover {
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #f3e5ab 0%,
+                            #d4af37 100%
+                    );
+
+            transform: translateY(-2px);
+        }
+
+
+        .subscription-btn {
+
+            background:
+                    rgba(16, 185, 129, 0.15);
+
+            color: #a7f3d0;
+
+            border:
+                    1px solid rgba(16, 185, 129, 0.35);
+        }
+
+
+        .subscription-btn:hover {
+
+            background:
+                    rgba(16, 185, 129, 0.28);
+
+            color: white;
+
+            transform: translateY(-2px);
+        }
+
+
+        .logout {
+
+            background:
+                    rgba(225, 29, 72, 0.15);
+
+            color: #fecdd3;
+
+            border:
+                    1px solid rgba(225, 29, 72, 0.3);
+        }
+
+
+        .logout:hover {
+
+            background:
+                    rgba(225, 29, 72, 0.25);
+
+            color: white;
+        }
+
+
+        /* =====================================================
+           STATS
+        ===================================================== */
+
+        .stats-container {
+
+            display: grid;
+
+            grid-template-columns:
+                    repeat(auto-fit, minmax(240px, 1fr));
+
+            gap: 20px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .stat-card {
+
+            background:
+                    rgba(15, 23, 42, 0.65);
+
+            border:
+                    1px solid rgba(212, 175, 55, 0.18);
+
+            padding: 22px 24px;
+
+            border-radius: 16px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .stat-title {
+
+            color: #94a3b8;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            text-transform: uppercase;
+        }
+
+
+        .stat-value {
+
+            font-size: 32px;
+
+            font-weight: 700;
+
+            color: #f8fafc;
+        }
+
+
+        .stat-icon {
+
+            width: 52px;
+
+            height: 52px;
+
+            background:
+                    rgba(212, 175, 55, 0.1);
+
+            border-radius: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #d4af37;
+
+            font-size: 22px;
+        }
+
+
+        /* =====================================================
+           MESSAGES
+        ===================================================== */
+
+        .message {
+
+            padding: 14px 18px;
+
+            border-radius: 10px;
+
+            margin-bottom: 25px;
+
+            font-size: 14px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .success {
+
+            background:
+                    rgba(16, 185, 129, 0.15);
+
+            color: #a7f3d0;
+
+            border-left:
+                    4px solid #10b981;
+        }
+
+
+        .error {
+
+            background:
+                    rgba(225, 29, 72, 0.15);
+
+            color: #fecdd3;
+
+            border-left:
+                    4px solid #f43f5e;
+        }
+
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .form-container {
+
+            display: none;
+
+            background:
+                    rgba(15, 23, 42, 0.85);
+
+            backdrop-filter: blur(16px);
+
+            border:
+                    1px solid rgba(212, 175, 55, 0.25);
+
+            padding: 30px;
+
+            border-radius: 18px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .form-container h2 {
+
+            font-size: 20px;
+
+            margin-bottom: 22px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding-bottom: 12px;
+
+            border-bottom:
+                    1px solid rgba(255, 255, 255, 0.08);
+        }
+
+
+        .form-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                    repeat(auto-fit, minmax(280px, 1fr));
+
+            gap: 20px;
+        }
+
+
+        .form-group label {
+
+            display: block;
+
+            font-weight: 600;
+
+            margin-bottom: 8px;
+
+            font-size: 13px;
+
+            color: #cbd5e1;
+        }
+
+
+        .form-group input {
+
+            width: 100%;
+
+            padding: 13px 16px;
+
+            background:
+                    rgba(30, 41, 59, 0.7);
+
+            border:
+                    1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 10px;
+
+            font-size: 14px;
+
+            color: #f8fafc;
+
+            outline: none;
+        }
+
+
+        .form-group input:focus {
+
+            border-color: #d4af37;
+
+            box-shadow:
+                    0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+
+        /* =====================================================
+           SUBSCRIPTION PLANS
+        ===================================================== */
+
+        .plan-section {
+
+            grid-column: 1 / -1;
+
+            margin-top: 5px;
+        }
+
+
+        .plan-title {
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            color: #f3e5ab;
+
+            margin-bottom: 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+        }
+
+
+        .plans {
+
+            display: grid;
+
+            grid-template-columns:
+                    repeat(3, 1fr);
+
+            gap: 15px;
+        }
+
+
+        .plan-card {
+
+            position: relative;
+
+            border:
+                    1px solid rgba(255, 255, 255, 0.1);
+
+            background:
+                    rgba(30, 41, 59, 0.6);
+
+            border-radius: 14px;
+
+            padding: 20px;
+
+            cursor: pointer;
+
+            transition: all 0.25s ease;
+        }
+
+
+        .plan-card:hover {
+
+            border-color: #d4af37;
+
+            transform: translateY(-2px);
+        }
+
+
+        .plan-card.selected {
+
+            border:
+                    2px solid #d4af37;
+
+            background:
+                    rgba(212, 175, 55, 0.10);
+
+            box-shadow:
+                    0 0 20px rgba(212, 175, 55, 0.12);
+        }
+
+
+        .plan-card input {
+
+            position: absolute;
+
+            opacity: 0;
+
+            pointer-events: none;
+        }
+
+
+        .plan-name {
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            color: #f8fafc;
+
+            margin-bottom: 8px;
+        }
+
+
+        .plan-price {
+
+            font-size: 28px;
+
+            font-weight: 800;
+
+            color: #d4af37;
+        }
+
+
+        .plan-price small {
+
+            font-size: 12px;
+
+            color: #94a3b8;
+
+            font-weight: 500;
+        }
+
+
+        .plan-description {
+
+            margin-top: 7px;
+
+            color: #94a3b8;
+
+            font-size: 12px;
+        }
+
+
+        .recommended {
+
+            position: absolute;
+
+            top: -10px;
+
+            right: 12px;
+
+            background: #d4af37;
+
+            color: #0f172a;
+
+            padding: 4px 9px;
+
+            border-radius: 20px;
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+        }
+
+
+        /* =====================================================
+           PAYMENT SUMMARY
+        ===================================================== */
+
+        .payment-summary {
+
+            grid-column: 1 / -1;
+
+            margin-top: 5px;
+
+            background:
+                    rgba(16, 185, 129, 0.07);
+
+            border:
+                    1px solid rgba(16, 185, 129, 0.2);
+
+            border-radius: 12px;
+
+            padding: 16px 18px;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 15px;
+        }
+
+
+        .payment-summary-text {
+
+            color: #94a3b8;
+
+            font-size: 13px;
+        }
+
+
+        .payment-summary-price {
+
+            font-size: 24px;
+
+            font-weight: 800;
+
+            color: #a7f3d0;
+        }
+
+
+        /* =====================================================
+           LOGO PREVIEW
+        ===================================================== */
+
+        .logo-preview-container {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            margin-top: 5px;
+        }
+
+
+        .logo-preview-box {
+
+            width: 50px;
+
+            height: 50px;
+
+            border-radius: 10px;
+
+            border:
+                    1px dashed rgba(212, 175, 55, 0.4);
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            overflow: hidden;
+
+            background:
+                    rgba(30, 41, 59, 0.5);
+
+            color: #64748b;
+        }
+
+
+        .logo-preview-box img {
+
+            width: 100%;
+
+            height: 100%;
+
+            object-fit: cover;
+        }
+
+
+        /* =====================================================
+           PAYMENT BUTTON
+        ===================================================== */
+
+        .pay-btn {
+
+            background:
+                    linear-gradient(
+                            135deg,
+                            #10b981,
+                            #047857
+                    );
+
+            color: white;
+
+            min-width: 210px;
+        }
+
+
+        .pay-btn:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                    0 8px 25px rgba(16, 185, 129, 0.25);
+        }
+
+
+        .pay-btn:disabled {
+
+            opacity: 0.6;
+
+            cursor: not-allowed;
+
+            transform: none;
+
+            box-shadow: none;
+        }
+
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
+
+        .search-box {
+
+            position: relative;
+
+            margin-bottom: 22px;
+        }
+
+
+        .search-box i {
+
+            position: absolute;
+
+            left: 18px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #64748b;
+        }
+
+
+        .search-box input {
+
+            width: 100%;
+
+            padding: 14px 20px 14px 48px;
+
+            background:
+                    rgba(15, 23, 42, 0.6);
+
+            border:
+                    1px solid rgba(255, 255, 255, 0.1);
+
+            border-radius: 12px;
+
+            color: #f8fafc;
+
+            outline: none;
+        }
+
+
+        .search-box input:focus {
+
+            border-color: #d4af37;
+        }
+
+
+        .table-container {
+
+            background:
+                    rgba(15, 23, 42, 0.7);
+
+            border:
+                    1px solid rgba(255, 255, 255, 0.08);
+
+            border-radius: 16px;
+
+            overflow-x: auto;
+        }
+
+
+        table {
+
+            width: 100%;
+
+            min-width: 900px;
+
+            border-collapse: collapse;
+
+            text-align: left;
+        }
+
+
+        th {
+
+            background:
+                    rgba(30, 41, 59, 0.8);
+
+            color: #94a3b8;
+
+            font-size: 12px;
+
+            text-transform: uppercase;
+
+            padding: 16px 20px;
+        }
+
+
+        td {
+
+            padding: 16px 20px;
+
+            border-bottom:
+                    1px solid rgba(255, 255, 255, 0.05);
+
+            color: #e2e8f0;
+
+            vertical-align: middle;
+        }
+
+
+        tr:hover td {
+
+            background:
+                    rgba(255, 255, 255, 0.02);
+        }
+
+
+        /* =====================================================
+           STUDIO AVATAR
+        ===================================================== */
+
+        .studio-avatar {
+
+            width: 44px;
+
+            height: 44px;
+
+            border-radius: 10px;
+
+            object-fit: cover;
+
+            border:
+                    1px solid rgba(212, 175, 55, 0.3);
+        }
+
+
+        .studio-avatar-placeholder {
+
+            width: 44px;
+
+            height: 44px;
+
+            border-radius: 10px;
+
+            background:
+                    rgba(212, 175, 55, 0.1);
+
+            color: #d4af37;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 18px;
+
+            border:
+                    1px solid rgba(212, 175, 55, 0.2);
+        }
+
+
+        /* =====================================================
+           STUDIO ID
+        ===================================================== */
+
+        .studio-id {
+
+            font-weight: 700;
+
+            color: #f3e5ab;
+
+            background:
+                    rgba(212, 175, 55, 0.12);
+
+            padding: 4px 10px;
+
+            border-radius: 6px;
+
+            font-family: monospace;
+        }
+
+
+        /* =====================================================
+           DELETE
+        ===================================================== */
+
+        .delete-btn {
+
+            background:
+                    rgba(225, 29, 72, 0.12);
+
+            color: #fecdd3;
+
+            border:
+                    1px solid rgba(225, 29, 72, 0.25);
+
+            padding: 8px 14px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+
+        .delete-btn:hover {
+
+            background:
+                    rgba(225, 29, 72, 0.85);
+
+            color: white;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+
+            text-align: center;
+
+            padding: 30px;
+
+            color: #64748b;
+
+            font-size: 13px;
+
+            margin-top: auto;
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .header {
+
+                padding: 14px 20px;
+            }
+
+
+            .header h1 {
+
+                font-size: 16px;
+            }
+
+
+            .user-info {
+
+                display: none;
+            }
+
+
+            .container {
+
+                width: 94%;
+
+                margin: 25px auto;
+            }
+
+
+            .top-section {
+
+                align-items: flex-start;
+            }
+
+
+            .top-section h2 {
+
+                font-size: 21px;
+            }
+
+
+            .button-group {
+
+                width: 100%;
+            }
+
+
+            .button-group .btn {
+
+                flex: 1;
+            }
+
+
+            .form-container {
+
+                padding: 20px;
+            }
+
+
+            .form-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .plans {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .payment-summary {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+
+            .pay-btn {
+
+                width: 100%;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="header">
+
+    <div class="header-brand">
+
+        <div class="brand-icon">
+
+            <i class="fa-solid fa-crown"></i>
+
+        </div>
+
+        <h1>
+            Studio Admin Dashboard
+        </h1>
+
+    </div>
+
+
+    <div class="user-info">
+
+        <i class="fa-solid fa-user-shield"></i>
+
+        <span>
+
+            Logged in as:
+
+            <strong th:text="${username}">
+                Admin
+            </strong>
+
+        </span>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<div class="container">
+
+
+    <!-- =====================================================
+         TOP SECTION
+    ====================================================== -->
+
+    <div class="top-section">
+
+        <h2>
+
+            <i class="fa-solid fa-building-columns"></i>
+
+            Studio Management
+
+        </h2>
+
+
+        <div class="button-group">
+
+
+            <!-- ADD STUDIO -->
+
+            <button
+                    type="button"
+                    class="btn add-btn"
+                    onclick="toggleAddStudio()">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Add Studio
+
+            </button>
+
+
+            <!-- SUBSCRIPTIONS -->
+
+            <a
+                    href="/subscriptions"
+                    class="btn subscription-btn">
+
+                <i class="fa-solid fa-credit-card"></i>
+
+                Subscriptions
+
+            </a>
+
+
+            <!-- LOGOUT -->
+
+            <a
+                    href="/logout"
+                    class="btn logout">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                Logout
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUCCESS MESSAGE
+    ====================================================== -->
+
+    <div
+            th:if="${successMessage}"
+            class="message success">
+
+        <i class="fa-solid fa-circle-check"></i>
+
+        <span th:text="${successMessage}">
+            Success
+        </span>
+
+    </div>
+
+
+    <!-- =====================================================
+         ERROR MESSAGE
+    ====================================================== -->
+
+    <div
+            th:if="${errorMessage}"
+            class="message error">
+
+        <i class="fa-solid fa-circle-exclamation"></i>
+
+        <span th:text="${errorMessage}">
+            Error
+        </span>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATISTICS
+    ====================================================== -->
+
+    <div class="stats-container">
+
+        <div class="stat-card">
+
+            <div>
+
+                <span class="stat-title">
+                    Total Registered Studios
+                </span>
+
+                <div
+                        class="stat-value"
+                        th:text="${#lists.size(studio)}">
+
+                    0
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-icon">
+
+                <i class="fa-solid fa-camera-retro"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ADD STUDIO + PAYMENT FORM
+    ====================================================== -->
+
+    <div
+            id="addStudioForm"
+            class="form-container">
+
+
+        <h2>
+
+            <i class="fa-solid fa-square-plus"></i>
+
+            Register New Studio
+
+        </h2>
+
+
+        <!--
+
+            IMPORTANT:
+
+            This form is NOT directly submitted.
+
+            JavaScript first creates Razorpay order,
+            opens payment,
+            verifies payment,
+            then submits this form.
+
+        -->
+
+        <form
+                id="studioRegistrationForm"
+                action="/add-studio"
+                method="post"
+                enctype="multipart/form-data">
+
+
+            <div class="form-grid">
+
+
+                <!-- =================================================
+                     STUDIO NAME
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label for="studio_name">
+                        Studio Name
+                    </label>
+
+                    <input
+                            type="text"
+                            id="studio_name"
+                            name="studio_name"
+                            placeholder="e.g. Apex Photography"
+                            required>
+
+                </div>
+
+
+                <!-- =================================================
+                     MOBILE
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label for="studio_mobile">
+                        Mobile Number
+                    </label>
+
+                    <input
+                            type="tel"
+                            id="studio_mobile"
+                            name="studio_mobile"
+                            placeholder="10-digit mobile"
+                            maxlength="10"
+                            pattern="[0-9]{10}"
+                            required>
+
+                </div>
+
+
+                <!-- =================================================
+                     EMAIL
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label for="studio_email">
+                        Email Address
+                    </label>
+
+                    <input
+                            type="email"
+                            id="studio_email"
+                            name="studio_email"
+                            placeholder="owner@domain.com"
+                            required>
+
+                </div>
+
+
+                <!-- =================================================
+                     OWNER
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label for="owner_name">
+                        Owner Name
+                    </label>
+
+                    <input
+                            type="text"
+                            id="owner_name"
+                            name="owner_name"
+                            placeholder="Full name"
+                            required>
+
+                </div>
+
+
+                <!-- =================================================
+                     PASSWORD
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Access Password
+                    </label>
+
+                    <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Minimum 6 characters"
+                            minlength="6"
+                            required>
+
+                </div>
+
+
+                <!-- =================================================
+                     LOGO
+                ================================================== -->
+
+                <div class="form-group">
+
+                    <label for="studio_logo">
+                        Studio Logo
+                    </label>
+
+
+                    <div class="logo-preview-container">
+
+                        <input
+                                type="file"
+                                id="studio_logo"
+                                name="studio_logo"
+                                accept="image/*"
+                                onchange="previewImage(this)">
+
+
+                        <div
+                                class="logo-preview-box"
+                                id="logoPreviewBox">
+
+                            <i class="fa-solid fa-image"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     SUBSCRIPTION PLANS
+                ================================================== -->
+
+                <div class="plan-section">
+
+                    <div class="plan-title">
+
+                        <i class="fa-solid fa-crown"></i>
+
+                        Select Subscription Plan
+
+                    </div>
+
+
+                    <div class="plans">
+
+
+                        <!-- 1 MONTH -->
+
+                        <label
+                                class="plan-card"
+                                id="planCard1">
+
+                            <input
+                                    type="radio"
+                                    name="plan"
+                                    value="1_MONTH"
+                                    data-amount="99"
+                                    onchange="selectPlan(this)"
+                                    required>
+
+
+                            <div class="plan-name">
+                                1 Month
+                            </div>
+
+
+                            <div class="plan-price">
+
+                                ₹99
+
+                                <small>
+                                    /month
+                                </small>
+
+                            </div>
+
+
+                            <div class="plan-description">
+
+                                Full studio access for 1 month.
+
+                            </div>
+
+                        </label>
+
+
+                        <!-- 3 MONTH -->
+
+                        <label
+                                class="plan-card"
+                                id="planCard2">
+
+                            <span class="recommended">
+                                Popular
+                            </span>
+
+
+                            <input
+                                    type="radio"
+                                    name="plan"
+                                    value="3_MONTH"
+                                    data-amount="249"
+                                    onchange="selectPlan(this)">
+
+
+                            <div class="plan-name">
+                                3 Months
+                            </div>
+
+
+                            <div class="plan-price">
+
+                                ₹249
+
+                                <small>
+                                    /3 months
+                                </small>
+
+                            </div>
+
+
+                            <div class="plan-description">
+
+                                Extended access with better value.
+
+                            </div>
+
+                        </label>
+
+
+                        <!-- 1 YEAR -->
+
+                        <label
+                                class="plan-card"
+                                id="planCard3">
+
+                            <span class="recommended">
+                                Best Value
+                            </span>
+
+
+                            <input
+                                    type="radio"
+                                    name="plan"
+                                    value="1_YEAR"
+                                    data-amount="799"
+                                    onchange="selectPlan(this)">
+
+
+                            <div class="plan-name">
+                                1 Year
+                            </div>
+
+
+                            <div class="plan-price">
+
+                                ₹799
+
+                                <small>
+                                    /year
+                                </small>
+
+                            </div>
+
+
+                            <div class="plan-description">
+
+                                Complete annual studio access.
+
+                            </div>
+
+                        </label>
+
+                    </div>
+
+                    <!-- =============================================
+                         TRIAL PLANS (same Razorpay payment flow)
+                    ============================================== -->
+
+                    <div class="plan-title" style="margin-top:22px;">
+
+                        <i class="fa-solid fa-hourglass-half"></i>
+
+                        Or start with a Trial
+
+                    </div>
+
+                    <div class="plans">
+
+                        <!-- 3 DAY TRIAL -->
+
+                        <label class="plan-card" id="planCard4">
+
+                            <input
+                                    type="radio"
+                                    name="plan"
+                                    value="3_DAY_TRIAL"
+                                    data-amount="1"
+                                    onchange="selectPlan(this)">
+
+                            <div class="plan-name">3 Day Trial</div>
+
+                            <div class="plan-price">
+                                ₹1
+                                <small>/3 days</small>
+                            </div>
+
+                            <div class="plan-description">
+                                Try the studio owner page for 3 days.
+                            </div>
+
+                        </label>
+
+
+                        <!-- 7 DAY TRIAL -->
+
+                        <label class="plan-card" id="planCard5">
+
+                            <input
+                                    type="radio"
+                                    name="plan"
+                                    value="7_DAY_TRIAL"
+                                    data-amount="29"
+                                    onchange="selectPlan(this)">
+
+                            <div class="plan-name">7 Day Trial</div>
+
+                            <div class="plan-price">
+                                ₹29
+                                <small>/7 days</small>
+                            </div>
+
+                            <div class="plan-description">
+                                Try the studio owner page for 1 week.
+                            </div>
+
+                        </label>
+
+
+                        <!-- 14 DAY TRIAL -->
+
+                        <label class="plan-card" id="planCard6">
+
+                            <input
+                                    type="radio"
+                                    name="plan"
+                                    value="14_DAY_TRIAL"
+                                    data-amount="59"
+                                    onchange="selectPlan(this)">
+
+                            <div class="plan-name">14 Day Trial</div>
+
+                            <div class="plan-price">
+                                ₹59
+                                <small>/14 days</small>
+                            </div>
+
+                            <div class="plan-description">
+                                Try the studio owner page for 2 weeks.
+                            </div>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     PAYMENT SUMMARY
+                ================================================== -->
+
+                <div
+                        class="payment-summary"
+                        id="paymentSummary">
+
+
+                    <div>
+
+                        <div
+                                class="payment-summary-text"
+                                id="selectedPlanText">
+
+                            Select a subscription plan
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                            class="payment-summary-price"
+                            id="selectedAmount">
+
+                        ₹0
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 FORM ACTIONS
+            ================================================== -->
+
+            <div
+                    class="form-actions"
+                    style="
+                        margin-top:20px;
+                        display:flex;
+                        gap:12px;
+                        flex-wrap:wrap;
+                    ">
+
+
+                <!-- PAY AND REGISTER -->
+
+                <button
+                        type="button"
+                        id="payButton"
+                        class="btn pay-btn"
+                        onclick="startPayment()">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    Pay & Register Studio
+
+                </button>
+
+
+                <!-- CANCEL -->
+
+                <button
+                        type="button"
+                        class="btn logout"
+                        onclick="toggleAddStudio()">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                    Cancel
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 HIDDEN PAYMENT DATA
+            ================================================== -->
+
+            <input
+                    type="hidden"
+                    id="razorpayOrderId"
+                    name="razorpayOrderId">
+
+
+            <input
+                    type="hidden"
+                    id="razorpayPaymentId"
+                    name="razorpayPaymentId">
+
+
+            <input
+                    type="hidden"
+                    id="razorpaySignature"
+                    name="razorpaySignature">
+
+
+            <input
+                    type="hidden"
+                    id="selectedPlanHidden"
+                    name="plan">
+
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         SEARCH
+    ====================================================== -->
+
+    <div class="search-box">
+
+        <input
+                type="text"
+                id="searchInput"
+                placeholder="Search studio..."
+                onkeyup="searchStudios()">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+    </div>
+
+
+    <!-- =====================================================
+         STUDIO TABLE
+    ====================================================== -->
+
+    <div class="table-container">
+
+        <table id="studioTable">
+
+
+            <thead>
+
+            <tr>
+
+                <th>#</th>
+
+                <th>Logo</th>
+
+                <th>Studio ID</th>
+
+                <th>Studio Name</th>
+
+                <th>Mobile</th>
+
+                <th>Email</th>
+
+                <th>Owner</th>
+
+                <th>Action</th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            <!-- STUDIO ROW -->
+
+            <tr
+                    th:each="s, status : ${studio}">
+
+
+                <td
+                        th:text="${status.count}">
+                    1
+                </td>
+
+
+                <!-- LOGO -->
+
+                <td>
+
+                    <img
+                            th:if="${s.studio_logo != null}"
+                            th:src="'data:image/jpeg;base64,' + ${s.studio_logo}"
+                            class="studio-avatar"
+                            alt="Studio Logo">
+
+
+                    <div
+                            th:if="${s.studio_logo == null}"
+                            class="studio-avatar-placeholder">
+
+                        <i class="fa-solid fa-camera"></i>
+
+                    </div>
+
+                </td>
+
+
+                <!-- STUDIO ID -->
+
+                <td>
+
+                    <span
+                            class="studio-id"
+                            th:text="${s.studio_ID}">
+
+                        STU001
+
+                    </span>
+
+                </td>
+
+
+                <!-- NAME -->
+
+                <td
+                        th:text="${s.studio_name}">
+
+                    Studio Name
+
+                </td>
+
+
+                <!-- MOBILE -->
+
+                <td
+                        th:text="${s.studio_mobile}">
+
+                    9876543210
+
+                </td>
+
+
+                <!-- EMAIL -->
+
+                <td
+                        th:text="${s.studio_Email}">
+
+                    email@domain.com
+
+                </td>
+
+
+                <!-- OWNER -->
+
+                <td
+                        th:text="${s.owner_name}">
+
+                    Owner
+
+                </td>
+
+
+                <!-- DELETE -->
+
+                <td>
+
+                    <form
+                            action="/delete-studio"
+                            method="post"
+                            onsubmit="return confirmDelete(this)">
+
+                        <input
+                                type="hidden"
+                                name="studio_ID"
+                                th:value="${s.studio_ID}">
+
+
+                        <button
+                                type="submit"
+                                class="delete-btn">
+
+                            <i class="fa-solid fa-trash-can"></i>
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+
+            <!-- NO RECORDS -->
+
+            <tr
+                    th:if="${#lists.isEmpty(studio)}">
+
+                <td
+                        colspan="8"
+                        style="
+                            text-align:center;
+                            padding:40px;
+                            color:#64748b;
+                        ">
+
+                    <i
+                            class="fa-solid fa-folder-open"
+                            style="
+                                font-size:30px;
+                                margin-bottom:10px;
+                                display:block;
+                            ">
+                    </i>
+
+                    No studio records found.
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer>
+
+    <i class="fa-solid fa-shield-halved"></i>
+
+    Studio Administration System
+
+</footer>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+
+    /* ========================================================
+       GLOBAL VARIABLES
+    ======================================================== */
+
+    let selectedPlan = null;
+
+    let selectedAmount = 0;
+
+
+    /* ========================================================
+       TOGGLE ADD STUDIO FORM
+    ======================================================== */
+
+    function toggleAddStudio() {
+
+        const form =
+            document.getElementById("addStudioForm");
+
+
+        if (form.style.display === "block") {
+
+            form.style.display = "none";
+
+        } else {
+
+            form.style.display = "block";
+
+
+            form.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
+
+    }
+
+
+    /* ========================================================
+       SELECT SUBSCRIPTION PLAN
+    ======================================================== */
+
+    function selectPlan(radio) {
+
+        selectedPlan =
+            radio.value;
+
+        selectedAmount =
+            parseInt(radio.dataset.amount);
+
+
+        /* Remove selected class */
+
+        document
+            .querySelectorAll(".plan-card")
+            .forEach(function(card) {
+
+                card.classList.remove("selected");
+
+            });
+
+
+        /* Add selected class */
+
+        radio
+            .closest(".plan-card")
+            .classList.add("selected");
+
+
+        /* Update payment summary */
+
+        document
+            .getElementById("selectedPlanText")
+            .textContent =
+            getPlanName(selectedPlan);
+
+
+        document
+            .getElementById("selectedAmount")
+            .textContent =
+            "₹" + selectedAmount;
+
+
+        /* Update hidden field */
+
+        document
+            .getElementById("selectedPlanHidden")
+            .value =
+            selectedPlan;
+
+    }
+
+
+    /* ========================================================
+       PLAN NAME
+    ======================================================== */
+
+    function getPlanName(plan) {
+
+        switch (plan) {
+
+            case "1_MONTH":
+                return "1 Month Subscription";
+
+            case "3_MONTH":
+                return "3 Months Subscription";
+
+            case "1_YEAR":
+                return "1 Year Subscription";
+
+            case "3_DAY_TRIAL":
+                return "3 Day Trial";
+
+            case "7_DAY_TRIAL":
+                return "7 Day Trial";
+
+            case "14_DAY_TRIAL":
+                return "14 Day Trial";
+
+            default:
+                return "Subscription";
+
+        }
+
+    }
+
+
+    /* ========================================================
+       START PAYMENT
+    ======================================================== */
+
+    async function startPayment() {
+
+
+        /* Validate form */
+
+        const form =
+            document.getElementById(
+                "studioRegistrationForm"
+            );
+
+
+        if (!form.checkValidity()) {
+
+            form.reportValidity();
+
+            return;
+
+        }
+
+
+        /* Check plan */
+
+        if (!selectedPlan) {
+
+            alert(
+                "Please select a subscription plan."
+            );
+
+            return;
+
+        }
+
+
+        /* Get user details */
+
+        const name =
+            document
+                .getElementById("owner_name")
+                .value
+                .trim();
+
+
+        const phone =
+            document
+                .getElementById("studio_mobile")
+                .value
+                .trim();
+
+
+        const email =
+            document
+                .getElementById("studio_email")
+                .value
+                .trim();
+
+
+        const button =
+            document.getElementById(
+                "payButton"
+            );
+
+
+        /* Disable button */
+
+        button.disabled = true;
+
+        button.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Creating Order...';
+
+
+        try {
+
+
+            /* =================================================
+               CREATE RAZORPAY ORDER
+            ================================================= */
+
+            const params =
+                new URLSearchParams();
+
+
+            params.append(
+                "name",
+                name
+            );
+
+
+            params.append(
+                "phone",
+                phone
+            );
+
+
+            params.append(
+                "email",
+                email
+            );
+
+
+            params.append(
+                "plan",
+                selectedPlan
+            );
+
+
+            const response =
+                await fetch(
+                    "/api/subscription/create-order",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+                        },
+
+                        body:
+                            params.toString()
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to create payment order."
+                );
+
+            }
+
+
+            /* =================================================
+               RAZORPAY OPTIONS
+            ================================================= */
+
+            const options = {
+
+                key:
+                data.key,
+
+                amount:
+                data.amount,
+
+                currency:
+                    data.currency || "INR",
+
+                name:
+                    "Studio Administration",
+
+                description:
+                    getPlanName(data.plan),
+
+                order_id:
+                data.orderId,
+
+
+                prefill: {
+
+                    name:
+                    data.name,
+
+                    email:
+                    data.email,
+
+                    contact:
+                    data.phone
+
+                },
+
+
+                notes: {
+
+                    plan:
+                    data.plan
+
+                },
+
+
+                theme: {
+
+                    color:
+                        "#d4af37"
+
+                },
+
+
+                modal: {
+
+                    ondismiss:
+                        function () {
+
+                            resetPaymentButton();
+
+                        }
+
+                },
+
+
+                /* =================================================
+                   PAYMENT SUCCESS
+                ================================================= */
+
+                handler:
+                    async function (paymentResponse) {
+
+                        await verifyPayment(
+                            paymentResponse
+                        );
+
+                    }
+
+            };
+
+
+            /* =================================================
+               OPEN RAZORPAY
+            ================================================= */
+
+            const razorpay =
+                new Razorpay(options);
+
+
+            razorpay.on(
+                "payment.failed",
+                function (response) {
+
+                    console.error(
+                        response.error
+                    );
+
+
+                    alert(
+                        "Payment failed: " +
+                        (
+                            response.error.description ||
+                            "Please try again."
+                        )
+                    );
+
+
+                    resetPaymentButton();
+
+                }
+            );
+
+
+            razorpay.open();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            alert(
+                error.message ||
+                "Unable to start payment."
+            );
+
+
+            resetPaymentButton();
+
+        }
+
+    }
+
+
+    /* ========================================================
+       VERIFY PAYMENT
+    ======================================================== */
+
+    async function verifyPayment(
+        paymentResponse
+    ) {
+
+
+        const button =
+            document.getElementById(
+                "payButton"
+            );
+
+
+        button.disabled = true;
+
+
+        button.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i> Verifying Payment...';
+
+
+        try {
+
+
+            const params =
+                new URLSearchParams();
+
+
+            params.append(
+                "razorpayOrderId",
+                paymentResponse.razorpay_order_id
+            );
+
+
+            params.append(
+                "razorpayPaymentId",
+                paymentResponse.razorpay_payment_id
+            );
+
+
+            params.append(
+                "razorpaySignature",
+                paymentResponse.razorpay_signature
+            );
+
+
+            /* ================================================
+               SEND TO SPRING BOOT
+            ================================================= */
+
+            const response =
+                await fetch(
+                    "/api/subscription/verify",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+                        },
+
+                        body:
+                            params.toString()
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                throw new Error(
+                    data.message ||
+                    "Payment verification failed."
+                );
+
+            }
+
+
+            /* ================================================
+               STORE PAYMENT INFORMATION
+            ================================================= */
+
+            document
+                .getElementById(
+                    "razorpayOrderId"
+                )
+                .value =
+                paymentResponse
+                    .razorpay_order_id;
+
+
+            document
+                .getElementById(
+                    "razorpayPaymentId"
+                )
+                .value =
+                paymentResponse
+                    .razorpay_payment_id;
+
+
+            document
+                .getElementById(
+                    "razorpaySignature"
+                )
+                .value =
+                paymentResponse
+                    .razorpay_signature;
+
+
+            document
+                .getElementById(
+                    "selectedPlanHidden"
+                )
+                .value =
+                selectedPlan;
+
+
+            /* ================================================
+               PAYMENT SUCCESS
+            ================================================= */
+
+            alert(
+                "Payment successful!\n\n" +
+                "Plan: " +
+                getPlanName(selectedPlan) +
+                "\nAmount: ₹" +
+                selectedAmount +
+                "\n\nCreating studio account..."
+            );
+
+
+            /* ================================================
+               NOW SUBMIT STUDIO FORM
+            ================================================= */
+
+            formSubmitAfterPayment();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            alert(
+                "Payment verification failed.\n\n" +
+                error.message
+            );
+
+
+            resetPaymentButton();
+
+        }
+
+    }
+
+
+    /* ========================================================
+       SUBMIT FORM AFTER PAYMENT
+    ======================================================== */
+
+    function formSubmitAfterPayment() {
+
+        const form =
+            document.getElementById(
+                "studioRegistrationForm"
+            );
+
+
+        /* Prevent JavaScript submit loop */
+
+        form.submit();
+
+    }
+
+
+    /* ========================================================
+       RESET PAYMENT BUTTON
+    ======================================================== */
+
+    function resetPaymentButton() {
+
+        const button =
+            document.getElementById(
+                "payButton"
+            );
+
+
+        button.disabled = false;
+
+
+        button.innerHTML =
+            '<i class="fa-solid fa-lock"></i> Pay & Register Studio';
+
+    }
+
+
+    /* ========================================================
+       IMAGE PREVIEW
+    ======================================================== */
+
+    function previewImage(input) {
+
+        const box =
+            document.getElementById(
+                "logoPreviewBox"
+            );
+
+
+        if (
+            input.files &&
+            input.files[0]
+        ) {
+
+            const file =
+                input.files[0];
+
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                alert(
+                    "Please select a valid image file."
+                );
+
+                input.value = "";
+
+                return;
+
+            }
+
+
+            if (
+                file.size >
+                5 * 1024 * 1024
+            ) {
+
+                alert(
+                    "Image size must be less than 5 MB."
+                );
+
+                input.value = "";
+
+                return;
+
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function (e) {
+
+                    box.innerHTML =
+                        `<img src="${e.target.result}"
+                              alt="Studio Logo Preview">`;
+
+                };
+
+
+            reader.readAsDataURL(file);
+
+        }
+
+    }
+
+
+    /* ========================================================
+       SEARCH STUDIOS
+    ======================================================== */
+
+    function searchStudios() {
+
+        const searchInput =
+            document
+                .getElementById(
+                    "searchInput"
+                )
+                .value
+                .toLowerCase()
+                .trim();
+
+
+        const rows =
+            document.querySelectorAll(
+                "#studioTable tbody tr"
+            );
+
+
+        rows.forEach(
+            function(row) {
+
+                const text =
+                    row.textContent
+                        .toLowerCase();
+
+
+                row.style.display =
+                    text.includes(
+                        searchInput
+                    )
+                        ? ""
+                        : "none";
+
+            }
+        );
+
+    }
+
+
+    /* ========================================================
+       DELETE CONFIRMATION
+    ======================================================== */
+
+    function confirmDelete(form) {
+
+        const studioID =
+            form.querySelector(
+                'input[name="studio_ID"]'
+            ).value;
+
+
+        return confirm(
+            "Are you sure you want to delete '" +
+            studioID +
+            "'?"
+        );
+
+    }
+
+
+    /* ========================================================
+       AUTO HIDE MESSAGES
+    ======================================================== */
+
+    setTimeout(
+        function () {
+
+            const messages =
+                document.querySelectorAll(
+                    ".message"
+                );
+
+
+            messages.forEach(
+                function(message) {
+
+                    message.style.transition =
+                        "opacity 0.5s ease";
+
+                    message.style.opacity =
+                        "0";
+
+
+                    setTimeout(
+                        function() {
+
+                            message.style.display =
+                                "none";
+
+                        },
+                        500
+                    );
+
+                }
+            );
+
+        },
+        5000
+    );
+
+</script>
+
+
+</body>
+
+</html>

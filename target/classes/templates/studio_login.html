@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Login - Royal Studio Suite</title>
+
+    <style>
+        :root {
+            --royal-navy: #0b132b;
+            --royal-deep: #1c2541;
+            --royal-accent: #3a506b;
+            --gold-primary: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-hover: #b8962e;
+            --gold-glow: rgba(212, 175, 55, 0.35);
+            --card-bg: rgba(28, 37, 65, 0.75);
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cinzel', 'Segoe UI', Georgia, Arial, sans-serif;
+            background: linear-gradient(135deg, #090e17 0%, #1c2541 50%, #0b132b 100%);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient Background Decorative Glows */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--gold-glow) 0%, rgba(0,0,0,0) 70%);
+            z-index: 0;
+            pointer-events: none;
+            animation: floatGlow 8s ease-in-out infinite alternate;
+        }
+
+        body::before { top: -10%; left: -10%; }
+        body::after { bottom: -10%; right: -10%; animation-delay: -4s; }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 30px) scale(1.15); }
+        }
+
+        /* ==============================
+           LOGIN CONTAINER (GLASSMORPHISM)
+           ============================== */
+
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: 420px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 45px 35px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5),
+            0 0 20px var(--gold-glow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-container:hover {
+            border-color: rgba(212, 175, 55, 0.6);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6),
+            0 0 30px rgba(212, 175, 55, 0.45);
+        }
+
+        /* Crown Header Badge */
+        .crown-badge {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+            filter: drop-shadow(0 0 8px var(--gold-glow));
+            animation: pulseCrown 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseCrown {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 28px;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(180deg, #ffffff 0%, var(--gold-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        /* ==============================
+           FORM STYLES
+           ============================== */
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            color: var(--gold-light);
+            text-transform: uppercase;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: var(--gold-primary);
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 14px 13px 42px;
+            background: rgba(11, 19, 43, 0.6);
+            border: 1.5px solid rgba(212, 175, 55, 0.25);
+            border-radius: 10px;
+            font-size: 15px;
+            color: var(--text-light);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group input:focus {
+            border-color: var(--gold-primary);
+            background: rgba(11, 19, 43, 0.85);
+            box-shadow: 0 0 12px var(--gold-glow);
+        }
+
+        /* ==============================
+           PASSWORD TOGGLE
+           ============================== */
+
+        .password-container input {
+            padding-right: 75px;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--gold-light);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .show-password:hover {
+            background: var(--gold-primary);
+            color: var(--royal-navy);
+            box-shadow: 0 0 8px var(--gold-glow);
+        }
+
+        /* ==============================
+           LOGIN BUTTON
+           ============================== */
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            border: 1px solid var(--gold-primary);
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-hover) 100%);
+            color: var(--royal-navy);
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--gold-glow);
+            background: linear-gradient(135deg, #e6c247 0%, var(--gold-primary) 100%);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ==============================
+           MESSAGES
+           ============================== */
+
+        .error-message,
+        .success-message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 22px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            animation: slideDown 0.4s ease;
+        }
+
+        .error-message {
+            background: rgba(220, 38, 38, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .success-message {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==============================
+           REGISTER LINK
+           ============================== */
+
+        .register-link {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: var(--gold-light);
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 5px;
+            transition: all 0.3s ease;
+            border-bottom: 1px dashed var(--gold-primary);
+        }
+
+        .register-link a:hover {
+            color: #ffffff;
+            border-bottom-style: solid;
+            text-shadow: 0 0 8px var(--gold-glow);
+        }
+
+        /* ==============================
+           MOBILE RESPONSIVENESS
+           ============================== */
+
+        @media (max-width: 450px) {
+            .login-container {
+                width: 90%;
+                padding: 30px 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <!-- ROYAL BADGE -->
+    <span class="crown-badge">👑</span>
+
+    <!-- TITLE -->
+    <h2>Studio Login</h2>
+
+    <!-- LOGIN ERROR -->
+    <div class="error-message" th:if="${session.loginError}">
+        <span>⚠️</span>
+        <span th:text="${session.loginError}">Invalid Studio ID or Password</span>
+    </div>
+
+    <!-- REGISTRATION SUCCESS -->
+    <div class="success-message" th:if="${session.studioSuccess}">
+        <span>✓</span>
+        <span th:text="${session.studioSuccess}">Studio registered successfully</span>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form th:action="@{/customer_home_page}" method="post">
+
+        <!-- STUDIO ID -->
+        <div class="form-group">
+            <label for="studio_ID">Studio ID</label>
+            <div class="input-wrapper">
+                <span class="input-icon">🏛️</span>
+                <input type="text"
+                       id="studio_ID"
+                       name="studio_ID"
+                       placeholder="Enter Studio ID"
+                       autocomplete="username"
+                       required>
+            </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper password-container">
+                <span class="input-icon">🔑</span>
+                <input type="password"
+                       id="password"
+                       name="password"
+                       placeholder="Enter Password"
+                       autocomplete="current-password"
+                       required>
+
+                <button type="button"
+                        class="show-password"
+                        onclick="togglePassword()"
+                        aria-label="Toggle password visibility">
+                    Show
+                </button>
+            </div>
+        </div>
+
+        <!-- LOGIN BUTTON -->
+        <button type="submit" class="login-btn">
+            <span>Login to Portal</span>
+            <span>➔</span>
+        </button>
+
+    </form>
+
+    <!-- REGISTER STUDIO -->
+    <div class="register-link">
+        Don't have a studio account?
+        <a th:href="@{/studio_registration}">Register Studio</a>
+    </div>
+
+</div>
+
+<!-- JAVASCRIPT -->
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const button = document.querySelector(".show-password");
+
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            button.textContent = "Hide";
+        } else {
+            passwordInput.type = "password";
+            button.textContent = "Show";
+        }
+    }
+</script>
+
+</body>
+</html>

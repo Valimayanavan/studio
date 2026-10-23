@@ -1,0 +1,2221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Studio Registration</title>
+
+    <!-- Razorpay Checkout -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e3a8a, #2563eb);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .register-wrapper {
+            width: 100%;
+            max-width: 950px;
+            background: rgba(255, 255, 255, 0.97);
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            display: grid;
+            grid-template-columns: 0.85fr 1.4fr;
+            animation: containerAppear 0.7s ease;
+        }
+
+        @keyframes containerAppear {
+
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+        }
+
+        .info-panel {
+            background: linear-gradient(160deg, #1d4ed8, #1e40af, #172554);
+            color: white;
+            padding: 55px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            border-radius: 16px;
+            background: white;
+            color: #1d4ed8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .info-panel h1 {
+            font-size: 34px;
+            line-height: 1.2;
+            margin-bottom: 15px;
+        }
+
+        .info-panel p {
+            color: #dbeafe;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            color: #eff6ff;
+        }
+
+        .feature-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-panel {
+            padding: 45px;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            color: #111827;
+            font-size: 28px;
+            margin-bottom: 7px;
+        }
+
+        .form-header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group input:not([type="file"]),
+        .form-group select {
+            width: 100%;
+            height: 52px;
+            padding: 20px 15px 5px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+            color: #111827;
+            background: #fff;
+            transition: border 0.25s, box-shadow 0.25s;
+        }
+
+        .form-group input:not([type="file"]):focus,
+        .form-group select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group label:not(.file-label) {
+            position: absolute;
+            left: 15px;
+            top: 17px;
+            color: #6b7280;
+            font-size: 14px;
+            pointer-events: none;
+            transition: 0.2s ease;
+            background: white;
+            padding: 0 4px;
+        }
+
+        .form-group input:not([type="file"]):focus + label,
+        .form-group input:not([type="file"]):not(:placeholder-shown) + label {
+            top: -8px;
+            font-size: 12px;
+            color: #2563eb;
+        }
+
+        .file-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .file-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            border: 1.5px dashed #d1d5db;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 13px;
+            color: #4b5563;
+            cursor: pointer;
+            background: #f9fafb;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 65px !important;
+        }
+
+        .show-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .strength-container {
+            margin-top: 8px;
+        }
+
+        .strength-bar {
+            height: 5px;
+            width: 100%;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 11px;
+            margin-top: 5px;
+            color: #6b7280;
+        }
+
+        .requirements {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+
+        .requirement {
+            margin-top: 3px;
+        }
+
+        .requirement.valid {
+            color: #16a34a;
+        }
+
+        .password-match {
+            font-size: 11px;
+            margin-top: 6px;
+        }
+
+        .match {
+            color: #16a34a;
+        }
+
+        .no-match {
+            color: #dc2626;
+        }
+
+        .submit-btn {
+            width: 100%;
+            height: 52px;
+            margin-top: 30px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        .submit-btn.loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .payment-info {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #eff6ff;
+            color: #1e40af;
+            font-size: 13px;
+            text-align: center;
+            display: none;
+        }
+
+        @media (max-width: 800px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .register-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .info-panel {
+                padding: 30px;
+            }
+
+            .info-panel h1 {
+                font-size: 27px;
+            }
+
+            .form-panel {
+                padding: 30px 22px;
+            }
+
+        }
+
+        @media (max-width: 550px) {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="register-wrapper">
+
+
+    <!-- =====================================================
+         INFORMATION PANEL
+         ===================================================== -->
+
+    <div class="info-panel">
+
+        <div class="logo">
+            S
+        </div>
+
+        <h1>
+            Create Your Studio Account
+        </h1>
+
+        <p>
+            Register your photography studio and manage your customers,
+            bookings and studio information from one place.
+        </p>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            Secure account
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            Easy studio management
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            Secure password protection
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="feature-icon">
+                ✓
+            </div>
+
+            Secure online payment
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         FORM PANEL
+         ===================================================== -->
+
+    <div class="form-panel">
+
+
+        <div class="form-header">
+
+            <h2>
+                Register Studio
+            </h2>
+
+            <p>
+                Enter your studio details and choose a subscription plan.
+            </p>
+
+        </div>
+
+
+
+        <form
+                id="registrationForm"
+                enctype="multipart/form-data"
+                onsubmit="return handleRegistration(event)"
+        >
+
+
+            <div class="form-grid">
+
+
+                <!-- =================================================
+                     STUDIO NAME
+                     ================================================= -->
+
+                <div class="form-group">
+
+                    <input
+                            type="text"
+                            id="studio_name"
+                            name="studio_name"
+                            placeholder=" "
+                            autocomplete="organization"
+                            required
+                    >
+
+                    <label for="studio_name">
+                        Studio Name
+                    </label>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     MOBILE
+                     ================================================= -->
+
+                <div class="form-group">
+
+                    <input
+                            type="tel"
+                            id="studio_mobile"
+                            name="studio_mobile"
+                            placeholder=" "
+                            maxlength="10"
+                            pattern="[0-9]{10}"
+                            inputmode="numeric"
+                            autocomplete="tel"
+                            required
+                    >
+
+                    <label for="studio_mobile">
+                        Mobile Number
+                    </label>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     EMAIL
+                     ================================================= -->
+
+                <div class="form-group">
+
+                    <input
+                            type="email"
+                            id="studio_email"
+                            name="studio_email"
+                            placeholder=" "
+                            autocomplete="email"
+                            required
+                    >
+
+                    <label for="studio_email">
+                        Email Address
+                    </label>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     OWNER NAME
+                     ================================================= -->
+
+                <div class="form-group">
+
+                    <input
+                            type="text"
+                            id="owner_name"
+                            name="owner_name"
+                            placeholder=" "
+                            autocomplete="name"
+                            required
+                    >
+
+                    <label for="owner_name">
+                        Owner Name
+                    </label>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     SUBSCRIPTION PLAN
+                     ================================================= -->
+
+                <div class="form-group full-width">
+
+                    <select
+                            id="plan"
+                            name="plan"
+                            required
+                    >
+
+                        <option
+                                value=""
+                                disabled
+                                selected
+                        >
+                            Select Subscription Plan
+                        </option>
+
+                        <option value="1_MONTH">
+                            1 Month - ₹99
+                        </option>
+
+                        <option value="3_MONTH">
+                            3 Months - ₹249
+                        </option>
+
+                        <option value="1_YEAR">
+                            1 Year - ₹799
+                        </option>
+                        <option value="3_DAY_TRIAL">
+                            3 days - ₹1
+                        </option>
+
+                        <option value="7_DAY_TRIAL">
+                            7 days - ₹29
+                        </option>
+
+                        <option value="14_DAY_TRIAL">
+                            14 days - ₹59
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     STUDIO LOGO
+                     ================================================= -->
+
+                <div
+                        class="form-group full-width file-input-wrapper"
+                >
+
+                    <label
+                            for="studio_logo"
+                            class="file-label"
+                    >
+                        Studio Logo (Optional)
+                    </label>
+
+                    <input
+                            type="file"
+                            id="studio_logo"
+                            name="studio_logo"
+                            accept="image/jpeg,image/png,image/webp"
+                    >
+
+                </div>
+
+
+
+                <!-- =================================================
+                     PASSWORD
+                     ================================================= -->
+
+                <div class="form-group">
+
+
+                    <div class="password-wrapper">
+
+                        <input
+                                type="password"
+                                id="new_password"
+                                name="new_password"
+                                placeholder=" "
+                                minlength="6"
+                                autocomplete="new-password"
+                                required
+                        >
+
+                        <label for="new_password">
+                            Password
+                        </label>
+
+                        <button
+                                type="button"
+                                class="show-password"
+                                onclick="togglePassword(
+                                    'new_password',
+                                    this
+                                )"
+                        >
+                            SHOW
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- PASSWORD STRENGTH -->
+
+                    <div class="strength-container">
+
+                        <div class="strength-bar">
+
+                            <div
+                                    id="strengthFill"
+                                    class="strength-fill"
+                            >
+                            </div>
+
+                        </div>
+
+
+                        <div
+                                id="strengthText"
+                                class="strength-text"
+                        >
+                            Password strength
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PASSWORD REQUIREMENTS -->
+
+                    <div class="requirements">
+
+                        <div
+                                id="lengthReq"
+                                class="requirement"
+                        >
+                            ○ At least 6 characters
+                        </div>
+
+
+                        <div
+                                id="numberReq"
+                                class="requirement"
+                        >
+                            ○ Contains a number
+                        </div>
+
+
+                        <div
+                                id="specialReq"
+                                class="requirement"
+                        >
+                            ○ Contains a special character
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     CONFIRM PASSWORD
+                     ================================================= -->
+
+                <div class="form-group">
+
+
+                    <div class="password-wrapper">
+
+                        <input
+                                type="password"
+                                id="re_password"
+                                name="re_password"
+                                placeholder=" "
+                                autocomplete="new-password"
+                                required
+                        >
+
+                        <label for="re_password">
+                            Confirm Password
+                        </label>
+
+
+                        <button
+                                type="button"
+                                class="show-password"
+                                onclick="togglePassword(
+                                    're_password',
+                                    this
+                                )"
+                        >
+                            SHOW
+                        </button>
+
+                    </div>
+
+
+                    <div
+                            id="passwordMatch"
+                            class="password-match"
+                    >
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =====================================================
+                 PAYMENT INFORMATION
+                 ===================================================== -->
+
+            <div
+                    id="paymentInfo"
+                    class="payment-info"
+            >
+                Razorpay payment will open after you click the button.
+            </div>
+
+
+
+            <!-- =====================================================
+                 SUBMIT BUTTON
+                 ===================================================== -->
+
+            <button
+                    type="submit"
+                    id="submitButton"
+                    class="submit-btn"
+            >
+                Pay & Create Studio Account
+            </button>
+
+        </form>
+
+
+
+        <!-- =====================================================
+             LOGIN LINK
+             ===================================================== -->
+
+        <div class="login-link">
+
+            Already have an account?
+
+            <a href="/studio_login">
+                Login
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+    /* =========================================================
+       SHOW / HIDE PASSWORD
+       ========================================================= */
+
+    function togglePassword(inputID, button) {
+
+        const input =
+            document.getElementById(inputID);
+
+
+        if (input.type === "password") {
+
+            input.type = "text";
+
+            button.textContent = "HIDE";
+
+        } else {
+
+            input.type = "password";
+
+            button.textContent = "SHOW";
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       PASSWORD STRENGTH
+       ========================================================= */
+
+    const password =
+        document.getElementById("new_password");
+
+
+    password.addEventListener(
+        "input",
+        function () {
+
+            const value =
+                password.value;
+
+            let strength = 0;
+
+
+            /* LENGTH */
+
+            if (value.length >= 6) {
+
+                strength++;
+
+                document
+                    .getElementById("lengthReq")
+                    .classList.add("valid");
+
+                document
+                    .getElementById("lengthReq")
+                    .textContent =
+                    "✓ At least 6 characters";
+
+            } else {
+
+                document
+                    .getElementById("lengthReq")
+                    .classList.remove("valid");
+
+                document
+                    .getElementById("lengthReq")
+                    .textContent =
+                    "○ At least 6 characters";
+
+            }
+
+
+
+            /* NUMBER */
+
+            if (/[0-9]/.test(value)) {
+
+                strength++;
+
+                document
+                    .getElementById("numberReq")
+                    .classList.add("valid");
+
+                document
+                    .getElementById("numberReq")
+                    .textContent =
+                    "✓ Contains a number";
+
+            } else {
+
+                document
+                    .getElementById("numberReq")
+                    .classList.remove("valid");
+
+                document
+                    .getElementById("numberReq")
+                    .textContent =
+                    "○ Contains a number";
+
+            }
+
+
+
+            /* SPECIAL CHARACTER */
+
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+
+                strength++;
+
+                document
+                    .getElementById("specialReq")
+                    .classList.add("valid");
+
+                document
+                    .getElementById("specialReq")
+                    .textContent =
+                    "✓ Contains a special character";
+
+            } else {
+
+                document
+                    .getElementById("specialReq")
+                    .classList.remove("valid");
+
+                document
+                    .getElementById("specialReq")
+                    .textContent =
+                    "○ Contains a special character";
+
+            }
+
+
+
+            /* UPDATE STRENGTH BAR */
+
+            const fill =
+                document.getElementById(
+                    "strengthFill"
+                );
+
+            const text =
+                document.getElementById(
+                    "strengthText"
+                );
+
+
+            if (value.length === 0) {
+
+                fill.style.width = "0%";
+
+                text.textContent =
+                    "Password strength";
+
+            } else if (strength === 1) {
+
+                fill.style.width = "33%";
+
+                text.textContent =
+                    "Weak password";
+
+            } else if (strength === 2) {
+
+                fill.style.width = "66%";
+
+                text.textContent =
+                    "Medium password";
+
+            } else {
+
+                fill.style.width = "100%";
+
+                text.textContent =
+                    "Strong password";
+
+            }
+
+
+            checkPasswordMatch();
+
+        }
+    );
+
+
+
+    /* =========================================================
+       CONFIRM PASSWORD
+       ========================================================= */
+
+    const confirmPassword =
+        document.getElementById(
+            "re_password"
+        );
+
+
+    confirmPassword.addEventListener(
+        "input",
+        checkPasswordMatch
+    );
+
+
+    function checkPasswordMatch() {
+
+        const passwordVal =
+            document.getElementById(
+                "new_password"
+            ).value;
+
+
+        const confirmVal =
+            document.getElementById(
+                "re_password"
+            ).value;
+
+
+        const message =
+            document.getElementById(
+                "passwordMatch"
+            );
+
+
+        if (confirmVal.length === 0) {
+
+            message.textContent = "";
+
+            message.className =
+                "password-match";
+
+            return;
+
+        }
+
+
+        if (passwordVal === confirmVal) {
+
+            message.textContent =
+                "✓ Passwords match";
+
+            message.className =
+                "password-match match";
+
+        } else {
+
+            message.textContent =
+                "✕ Passwords do not match";
+
+            message.className =
+                "password-match no-match";
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       MOBILE NUMBER
+       ========================================================= */
+
+    const mobile =
+        document.getElementById(
+            "studio_mobile"
+        );
+
+
+    mobile.addEventListener(
+        "input",
+        function () {
+
+            this.value =
+                this.value.replace(
+                    /[^0-9]/g,
+                    ""
+                );
+
+        }
+    );
+
+
+
+    /* =========================================================
+       PLAN AMOUNT
+       ========================================================= */
+
+    function getPlanAmount(plan) {
+
+        switch (plan) {
+
+            case "1_MONTH":
+                return 99;
+
+            case "3_MONTH":
+                return 249;
+
+            case "1_YEAR":
+                return 799;
+
+            case "3_DAY_TRIAL":
+                return 1;
+
+            case "7_DAY_TRIAL":
+                return 29;
+
+            case "14_DAY_TRIAL":
+                return 59;
+
+            default:
+                return 0;
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       PLAN DESCRIPTION
+       ========================================================= */
+
+    function getPlanDescription(plan) {
+
+        switch (plan) {
+
+            case "1_MONTH":
+                return "1 Month Studio Subscription - ₹99";
+
+            case "3_MONTH":
+                return "3 Months Studio Subscription - ₹249";
+
+            case "1_YEAR":
+                return "1 Year Studio Subscription - ₹799";
+            case "3_DAY_TRIAL":
+                return "3 days Studio Subscription - ₹1 ";
+
+            case "7_DAY_TRIAL":
+                return "7 days Studio Subscription - ₹29";
+
+            case "14_DAY_TRIAL":
+                return "14 days Studio Subscription - ₹59";
+
+
+            default:
+                return "Studio Subscription";
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       FORM VALIDATION
+       ========================================================= */
+
+    function validateStudioForm() {
+
+        const studioName =
+            document.getElementById(
+                "studio_name"
+            ).value.trim();
+
+
+        const mobileVal =
+            document.getElementById(
+                "studio_mobile"
+            ).value.trim();
+
+
+        const emailVal =
+            document.getElementById(
+                "studio_email"
+            ).value.trim();
+
+
+        const ownerName =
+            document.getElementById(
+                "owner_name"
+            ).value.trim();
+
+
+        const plan =
+            document.getElementById(
+                "plan"
+            ).value;
+
+
+        const passwordVal =
+            document.getElementById(
+                "new_password"
+            ).value;
+
+
+        const confirmPasswordVal =
+            document.getElementById(
+                "re_password"
+            ).value;
+
+
+
+        /* STUDIO NAME */
+
+        if (studioName.length === 0) {
+
+            alert(
+                "Please enter studio name."
+            );
+
+            return false;
+
+        }
+
+
+
+        /* MOBILE */
+
+        if (!/^[0-9]{10}$/.test(mobileVal)) {
+
+            alert(
+                "Please enter a valid 10 digit mobile number."
+            );
+
+            return false;
+
+        }
+
+
+
+        /* EMAIL */
+
+        if (
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                .test(emailVal)
+        ) {
+
+            alert(
+                "Please enter a valid email address."
+            );
+
+            return false;
+
+        }
+
+
+
+        /* OWNER */
+
+        if (ownerName.length === 0) {
+
+            alert(
+                "Please enter owner name."
+            );
+
+            return false;
+
+        }
+
+
+
+        /* PLAN */
+
+        if (!plan) {
+
+            alert(
+                "Please select a subscription plan."
+            );
+
+            return false;
+
+        }
+
+
+
+        /* PASSWORD */
+
+        if (passwordVal.length < 6) {
+
+            alert(
+                "Password must contain at least 6 characters."
+            );
+
+            return false;
+
+        }
+
+
+
+        /* CONFIRM PASSWORD */
+
+        if (passwordVal !== confirmPasswordVal) {
+
+            alert(
+                "Password and Confirm Password do not match."
+            );
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
+
+
+    /* =========================================================
+       RESET BUTTON
+       ========================================================= */
+
+    function resetButton() {
+
+        const button =
+            document.getElementById(
+                "submitButton"
+            );
+
+
+        button.disabled = false;
+
+        button.classList.remove(
+            "loading"
+        );
+
+        button.textContent =
+            "Pay & Create Studio Account";
+
+    }
+
+
+
+    /* =========================================================
+       MAIN REGISTRATION
+       ========================================================= */
+
+    async function handleRegistration(event) {
+
+        event.preventDefault();
+
+
+        /* VALIDATE FORM */
+
+        if (!validateStudioForm()) {
+
+            return false;
+
+        }
+
+
+        const button =
+            document.getElementById(
+                "submitButton"
+            );
+
+
+        const paymentInfo =
+            document.getElementById(
+                "paymentInfo"
+            );
+
+
+        const studioName =
+            document.getElementById(
+                "studio_name"
+            ).value.trim();
+
+
+        const mobileVal =
+            document.getElementById(
+                "studio_mobile"
+            ).value.trim();
+
+
+        const emailVal =
+            document.getElementById(
+                "studio_email"
+            ).value.trim();
+
+
+        const ownerName =
+            document.getElementById(
+                "owner_name"
+            ).value.trim();
+
+
+        const plan =
+            document.getElementById(
+                "plan"
+            ).value;
+
+
+        const amount =
+            getPlanAmount(plan);
+
+
+        if (amount <= 0) {
+
+            alert(
+                "Invalid subscription plan."
+            );
+
+            return false;
+
+        }
+
+
+
+        /* DISABLE BUTTON */
+
+        button.disabled = true;
+
+        button.classList.add(
+            "loading"
+        );
+
+        button.textContent =
+            "Creating Payment Order...";
+
+
+        paymentInfo.style.display =
+            "block";
+
+
+        paymentInfo.textContent =
+            "Creating secure payment order...";
+
+
+
+        try {
+
+
+            /* =================================================
+               STEP 1 — CREATE ORDER
+               ================================================= */
+
+            const orderResponse =
+                await fetch(
+                    "/api/subscription/create-order",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+
+                        },
+
+                        body:
+                            new URLSearchParams({
+
+                                name:
+                                studioName,
+
+                                phone:
+                                mobileVal,
+
+                                email:
+                                emailVal,
+
+                                plan:
+                                plan
+
+                            })
+
+                    }
+                );
+
+
+
+            const orderText =
+                await orderResponse.text();
+
+
+            let order;
+
+
+            try {
+
+                order =
+                    JSON.parse(orderText);
+
+            } catch (e) {
+
+                throw new Error(
+                    "Server returned an invalid response while creating payment order."
+                );
+
+            }
+
+
+
+            console.log(
+                "CREATE ORDER RESPONSE:",
+                order
+            );
+
+
+
+            if (
+                !orderResponse.ok ||
+                !order.success
+            ) {
+
+                throw new Error(
+                    order.message ||
+                    "Unable to create payment order."
+                );
+
+            }
+
+
+
+            if (
+                !order.key ||
+                !order.orderId ||
+                !order.amount
+            ) {
+
+                throw new Error(
+                    "Invalid payment order received from server."
+                );
+
+            }
+
+
+
+            /* =================================================
+               STEP 2 — OPEN RAZORPAY
+               ================================================= */
+
+            button.textContent =
+                "Opening Payment...";
+
+
+            paymentInfo.textContent =
+                "Opening secure Razorpay payment...";
+
+
+
+            const options = {
+
+                key:
+                order.key,
+
+                amount:
+                order.amount,
+
+                currency:
+                order.currency,
+
+                name:
+                    "Studio Management",
+
+                description:
+                    getPlanDescription(plan),
+
+                order_id:
+                order.orderId,
+
+
+
+                /* CUSTOMER INFORMATION */
+
+                prefill: {
+
+                    name:
+                    ownerName,
+
+                    email:
+                    emailVal,
+
+                    contact:
+                    mobileVal
+
+                },
+
+
+
+                /* PAYMENT NOTES */
+
+                notes: {
+
+                    studio_name:
+                    studioName,
+
+                    owner_name:
+                    ownerName,
+
+                    plan:
+                    plan
+
+                },
+
+
+
+                theme: {
+
+                    color:
+                        "#2563eb"
+
+                },
+
+
+
+                /* =================================================
+                   PAYMENT SUCCESS
+                   ================================================= */
+
+                handler:
+                    async function (
+                        razorpayResponse
+                    ) {
+
+                        console.log(
+                            "RAZORPAY PAYMENT RESPONSE:",
+                            razorpayResponse
+                        );
+
+
+                        if (
+                            !razorpayResponse
+                                .razorpay_order_id ||
+                            !razorpayResponse
+                                .razorpay_payment_id ||
+                            !razorpayResponse
+                                .razorpay_signature
+                        ) {
+
+                            alert(
+                                "Razorpay returned incomplete payment information."
+                            );
+
+                            resetButton();
+
+                            paymentInfo.textContent =
+                                "Payment information was incomplete.";
+
+                            return;
+
+                        }
+
+
+
+                        await verifyPayment(
+                            razorpayResponse,
+                            studioName,
+                            mobileVal,
+                            emailVal,
+                            ownerName,
+                            plan
+                        );
+
+                    },
+
+
+
+                /* =================================================
+                   PAYMENT WINDOW CLOSED
+                   ================================================= */
+
+                modal: {
+
+                    ondismiss:
+                        function () {
+
+                            console.log(
+                                "Razorpay checkout closed."
+                            );
+
+
+                            resetButton();
+
+
+                            paymentInfo.style.display =
+                                "block";
+
+
+                            paymentInfo.textContent =
+                                "Payment cancelled. You can try again.";
+
+                        }
+
+                }
+
+            };
+
+
+
+            /* =================================================
+               CREATE RAZORPAY OBJECT
+               ================================================= */
+
+            const razorpay =
+                new Razorpay(options);
+
+
+
+            /* =================================================
+               PAYMENT FAILED
+               ================================================= */
+
+            razorpay.on(
+                "payment.failed",
+                function (response) {
+
+                    console.error(
+                        "PAYMENT FAILED:",
+                        response
+                    );
+
+
+                    let message =
+                        "Payment failed. Please try again.";
+
+
+                    if (
+                        response &&
+                        response.error &&
+                        response.error.description
+                    ) {
+
+                        message =
+                            response.error.description;
+
+                    }
+
+
+                    alert(
+                        "Payment failed.\n\n" +
+                        message
+                    );
+
+
+                    resetButton();
+
+
+                    paymentInfo.textContent =
+                        "Payment failed. Please try again.";
+
+                }
+            );
+
+
+
+            /* OPEN CHECKOUT */
+
+            razorpay.open();
+
+
+        } catch (error) {
+
+
+            console.error(
+                "CREATE ORDER ERROR:",
+                error
+            );
+
+
+            alert(
+                "Unable to start payment.\n\n" +
+                error.message
+            );
+
+
+            resetButton();
+
+
+            paymentInfo.style.display =
+                "none";
+
+        }
+
+
+        return false;
+
+    }
+
+
+
+    /* =========================================================
+       VERIFY PAYMENT
+       ========================================================= */
+
+    async function verifyPayment(
+        response,
+        studioName,
+        mobileVal,
+        emailVal,
+        ownerName,
+        plan
+    ) {
+
+
+        const button =
+            document.getElementById(
+                "submitButton"
+            );
+
+
+        const paymentInfo =
+            document.getElementById(
+                "paymentInfo"
+            );
+
+
+        button.textContent =
+            "Verifying Payment...";
+
+
+        paymentInfo.style.display =
+            "block";
+
+
+        paymentInfo.textContent =
+            "Payment received. Verifying payment securely...";
+
+
+
+        try {
+
+
+            /* =================================================
+               SEND PAYMENT DETAILS TO BACKEND
+               ================================================= */
+
+            const verifyResponse =
+                await fetch(
+                    "/api/subscription/verify",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+
+                        },
+
+                        body:
+                            new URLSearchParams({
+
+                                razorpayOrderId:
+                                response
+                                    .razorpay_order_id,
+
+                                razorpayPaymentId:
+                                response
+                                    .razorpay_payment_id,
+
+                                razorpaySignature:
+                                response
+                                    .razorpay_signature
+
+                            })
+
+                    }
+                );
+
+
+
+            const verifyText =
+                await verifyResponse.text();
+
+
+            let result;
+
+
+            try {
+
+                result =
+                    JSON.parse(verifyText);
+
+            } catch (e) {
+
+                throw new Error(
+                    "Invalid response received from payment verification server."
+                );
+
+            }
+
+
+
+            console.log(
+                "VERIFY RESPONSE:",
+                result
+            );
+
+
+
+            if (
+                !verifyResponse.ok ||
+                !result.success
+            ) {
+
+                throw new Error(
+                    result.message ||
+                    "Payment verification failed."
+                );
+
+            }
+
+
+
+            /* =================================================
+               PAYMENT VERIFIED
+               ================================================= */
+
+            paymentInfo.textContent =
+                "✓ Payment verified! Creating your studio account...";
+
+
+            button.textContent =
+                "Creating Studio Account...";
+
+
+
+            /* =================================================
+               CREATE STUDIO ACCOUNT
+               ================================================= */
+
+            await createStudioAccount(
+                studioName,
+                mobileVal,
+                emailVal,
+                ownerName,
+                plan,
+                response.razorpay_order_id
+            );
+
+
+        } catch (error) {
+
+
+            console.error(
+                "PAYMENT VERIFICATION ERROR:",
+                error
+            );
+
+
+            alert(
+                "Payment verification failed.\n\n" +
+                error.message
+            );
+
+
+            resetButton();
+
+
+            paymentInfo.textContent =
+                "Payment verification failed.";
+
+        }
+
+    }
+
+
+
+    /* =========================================================
+       CREATE STUDIO ACCOUNT
+       ========================================================= */
+
+    async function createStudioAccount(
+        studioName,
+        mobileVal,
+        emailVal,
+        ownerName,
+        plan,
+        razorpayOrderId
+    ) {
+
+
+        const button =
+            document.getElementById(
+                "submitButton"
+            );
+
+
+        const paymentInfo =
+            document.getElementById(
+                "paymentInfo"
+            );
+
+
+        button.textContent =
+            "Creating Studio Account...";
+
+
+        paymentInfo.textContent =
+            "Payment verified. Creating your studio account...";
+
+
+
+        /* =================================================
+           CREATE MULTIPART FORM DATA
+           ================================================= */
+
+        const formData =
+            new FormData();
+
+
+
+        formData.append(
+            "studio_name",
+            studioName
+        );
+
+
+        formData.append(
+            "studio_mobile",
+            mobileVal
+        );
+
+
+        formData.append(
+            "studio_email",
+            emailVal
+        );
+
+
+        formData.append(
+            "owner_name",
+            ownerName
+        );
+
+
+        formData.append(
+            "plan",
+            plan
+        );
+
+
+        /* =================================================
+           IMPORTANT:
+           SEND EXACT RAZORPAY ORDER ID
+           ================================================= */
+
+        formData.append(
+            "razorpayOrderId",
+            razorpayOrderId
+        );
+
+
+
+        /* =================================================
+           PASSWORD
+           ================================================= */
+
+        const passwordVal =
+            document.getElementById(
+                "new_password"
+            ).value;
+
+
+        const confirmPasswordVal =
+            document.getElementById(
+                "re_password"
+            ).value;
+
+
+        formData.append(
+            "new_password",
+            passwordVal
+        );
+
+
+        formData.append(
+            "re_password",
+            confirmPasswordVal
+        );
+
+
+
+        /* =================================================
+           STUDIO LOGO
+           ================================================= */
+
+        const logoInput =
+            document.getElementById(
+                "studio_logo"
+            );
+
+
+        if (
+            logoInput.files &&
+            logoInput.files.length > 0
+        ) {
+
+            formData.append(
+                "studio_logo",
+                logoInput.files[0]
+            );
+
+        }
+
+
+
+        /* =================================================
+           SEND TO SPRING BOOT
+           ================================================= */
+
+        const response =
+            await fetch(
+                "/studio_register",
+                {
+
+                    method: "POST",
+
+                    body: formData
+
+                }
+            );
+
+
+
+        /* =================================================
+           HANDLE SPRING REDIRECT
+           ================================================= */
+
+        if (response.redirected) {
+
+            window.location.href =
+                response.url;
+
+            return;
+
+        }
+
+
+
+        /* =================================================
+           HANDLE ERROR
+           ================================================= */
+
+        if (!response.ok) {
+
+            const errorText =
+                await response.text();
+
+            throw new Error(
+                errorText ||
+                "Studio account creation failed."
+            );
+
+        }
+
+
+
+        /* =================================================
+           SUCCESS
+           ================================================= */
+
+        paymentInfo.textContent =
+            "✓ Payment successful! Studio account created.";
+
+
+        button.textContent =
+            "Registration Successful";
+
+
+        button.disabled = true;
+
+
+
+        alert(
+            "Payment successful!\n\n" +
+            "Your studio account has been created successfully."
+        );
+
+
+        window.location.href =
+            "/studio_login";
+
+    }
+
+
+
+</script>
+
+</body>
+
+</html>

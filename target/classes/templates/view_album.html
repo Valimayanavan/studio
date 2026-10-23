@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${album.album_name}">
+        Album
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .header {
+            background: #222;
+            color: white;
+            padding: 20px 40px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+
+            padding: 10px 16px;
+            border-radius: 7px;
+
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: #555;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .album-info {
+            background: white;
+            padding: 25px;
+
+            border-radius: 12px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                    0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .album-info h2 {
+            margin-top: 0;
+        }
+
+        .album-info p {
+            color: #666;
+        }
+
+        .gallery {
+            display: grid;
+
+            grid-template-columns:
+                    repeat(
+                            auto-fill,
+                            minmax(220px, 1fr)
+                    );
+
+            gap: 20px;
+        }
+
+        .photo-card {
+            background: white;
+
+            padding: 10px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                    0 3px 10px rgba(0,0,0,0.1);
+
+            transition: 0.2s;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                    0 6px 18px rgba(0,0,0,0.15);
+        }
+
+        .photo-card img {
+            width: 100%;
+
+            height: 220px;
+
+            object-fit: cover;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+        }
+
+        .photo-name {
+            margin-top: 10px;
+
+            font-size: 13px;
+
+            color: #666;
+
+            word-break: break-word;
+        }
+
+        .download-btn {
+            display: block;
+
+            margin-top: 10px;
+
+            width: 100%;
+
+            padding: 10px;
+
+            background: #198754;
+
+            color: white;
+
+            text-decoration: none;
+
+            text-align: center;
+
+            border-radius: 7px;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+        }
+
+        .download-btn:hover {
+            background: #146c43;
+        }
+
+        .empty {
+            background: white;
+
+            padding: 40px;
+
+            text-align: center;
+
+            border-radius: 12px;
+
+            color: #777;
+
+            box-shadow:
+                    0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .image-modal {
+            display: none;
+
+            position: fixed;
+
+            z-index: 1000;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background:
+                    rgba(0,0,0,0.85);
+
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+        }
+
+        .image-modal.show {
+            display: flex;
+        }
+
+        .modal-image {
+            max-width: 90%;
+            max-height: 90%;
+
+            object-fit: contain;
+
+            border-radius: 8px;
+        }
+
+        .close-modal {
+            position: absolute;
+
+            top: 15px;
+            right: 25px;
+
+            color: white;
+
+            font-size: 40px;
+
+            cursor: pointer;
+        }
+
+        @media(max-width:600px) {
+
+            .header {
+                padding: 18px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+            .gallery {
+                grid-template-columns:
+                        repeat(2, 1fr);
+
+                gap: 10px;
+            }
+
+            .photo-card img {
+                height: 160px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<div class="header">
+
+    <h1>
+        📚
+        <span th:text="${album.album_name}">
+            Album
+        </span>
+    </h1>
+
+    <a th:href="@{'/customer_albums/' + ${album.customer_id}}"
+       class="back-btn">
+        ← Back to Albums
+    </a>
+
+</div>
+
+
+<div class="container">
+
+
+    <!-- ALBUM INFORMATION -->
+
+    <div class="album-info">
+
+        <h2 th:text="${album.album_name}">
+            Album Name
+        </h2>
+
+        <p>
+            Album ID:
+            <strong th:text="${album.album_id}">
+                0
+            </strong>
+        </p>
+
+        <p>
+            Total Photos:
+            <strong th:text="${#lists.size(images)}">
+                0
+            </strong>
+        </p>
+
+    </div>
+
+
+    <!-- NO PHOTOS -->
+
+    <div class="empty"
+         th:if="${images == null || #lists.isEmpty(images)}">
+
+        <h3>
+            No Photos
+        </h3>
+
+        <p>
+            This album does not contain any photos.
+        </p>
+
+    </div>
+
+
+    <!-- ALBUM PHOTOS -->
+
+    <div class="gallery"
+         th:if="${images != null && !#lists.isEmpty(images)}">
+
+
+        <div class="photo-card"
+             th:each="image : ${images}">
+
+
+            <!-- IMAGE -->
+
+            <img th:src="@{'/customer_image/' + ${image.image_id}}"
+                 th:alt="${image.image_name}"
+                 onclick="openImage(this.src)">
+
+
+            <!-- IMAGE NAME -->
+
+            <div class="photo-name"
+                 th:text="${image.image_name}">
+
+                Image Name
+
+            </div>
+
+
+            <!-- DOWNLOAD BUTTON -->
+
+            <a class="download-btn"
+               th:href="@{'/download_album_image/' + ${image.image_id}}">
+
+                ⬇ Download
+
+            </a>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- IMAGE MODAL -->
+
+<div id="imageModal"
+     class="image-modal"
+     onclick="closeImage(event)">
+
+    <span class="close-modal"
+          onclick="closeImage()">
+
+        &times;
+
+    </span>
+
+    <img id="modalImage"
+         class="modal-image"
+         src=""
+         alt="Album Image">
+
+</div>
+
+
+<script>
+
+    function openImage(imageUrl) {
+
+        const modal =
+            document.getElementById("imageModal");
+
+        const modalImage =
+            document.getElementById("modalImage");
+
+        modalImage.src = imageUrl;
+
+        modal.classList.add("show");
+    }
+
+
+    function closeImage(event) {
+
+        if (
+            event &&
+            event.target &&
+            event.target.id === "modalImage"
+        ) {
+            return;
+        }
+
+        const modal =
+            document.getElementById("imageModal");
+
+        const modalImage =
+            document.getElementById("modalImage");
+
+        modal.classList.remove("show");
+
+        modalImage.src = "";
+    }
+
+</script>
+
+
+</body>
+
+</html>
