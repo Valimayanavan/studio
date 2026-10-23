@@ -1,0 +1,13 @@
+package org.example.studio_admin;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class StudioAdminApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}

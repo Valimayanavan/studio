@@ -1,0 +1,322 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css");
+
+:root {
+    --studio-navy: #101a35;
+    --studio-navy-deep: #0b132b;
+    --studio-gold: #d4af37;
+    --studio-gold-light: #f3e5ab;
+    --studio-blue: #3157a4;
+    --studio-ink: #1e293b;
+    --studio-muted: #64748b;
+    --studio-surface: #ffffff;
+    --studio-shadow: 0 12px 30px rgba(15, 23, 42, .09);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+    transition: color .18s ease, background-color .18s ease, border-color .18s ease,
+        box-shadow .18s ease, transform .18s ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+label[for]:focus-visible {
+    outline: 3px solid rgba(49, 87, 164, .45);
+    outline-offset: 3px;
+}
+
+button,
+input[type="submit"],
+input[type="button"],
+.btn,
+.button,
+.back-btn,
+.add-btn,
+.subscription-btn,
+.logout,
+.login-btn,
+.upload-label,
+.view-btn {
+    min-height: 42px;
+    border-radius: 10px;
+    font-weight: 650;
+    letter-spacing: .01em;
+}
+
+.btn,
+.button,
+.back-btn,
+.add-btn,
+.subscription-btn,
+.logout,
+.view-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    text-decoration: none;
+}
+
+button:not(.password-toggle),
+input[type="submit"],
+input[type="button"],
+.btn,
+.button,
+.back-btn,
+.add-btn,
+.subscription-btn,
+.logout,
+.login-btn,
+.upload-label,
+.view-btn {
+    box-shadow: 0 3px 9px rgba(15, 23, 42, .12);
+}
+
+button:not(.password-toggle):hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.btn:hover,
+.button:hover,
+.back-btn:hover,
+.add-btn:hover,
+.subscription-btn:hover,
+.logout:hover,
+.login-btn:hover,
+.upload-label:hover,
+.view-btn:hover {
+    transform: translateY(-2px);
+}
+
+button:active,
+input[type="submit"]:active,
+.btn:active,
+.button:active,
+.back-btn:active,
+.add-btn:active,
+.subscription-btn:active,
+.logout:active,
+.login-btn:active,
+.upload-label:active,
+.view-btn:active {
+    transform: translateY(0);
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+select,
+textarea {
+    border-radius: 9px;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--studio-blue);
+    box-shadow: 0 0 0 3px rgba(49, 87, 164, .15);
+}
+
+img {
+    max-width: 100%;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+th {
+    white-space: nowrap;
+}
+
+td {
+    overflow-wrap: anywhere;
+}
+
+.toolbar,
+.button-group,
+.folder-actions,
+.actions,
+.form-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn i,
+.button i,
+.back-btn i,
+.add-btn i,
+.subscription-btn i,
+.logout i,
+.login-btn i,
+.view-btn i,
+.upload-label i {
+    flex: 0 0 auto;
+    line-height: 1;
+}
+
+.card,
+.customer-box,
+.customer-info,
+.album-info,
+.photo-card,
+.folder,
+.stat,
+.stat-card,
+.upload-section,
+.empty {
+    box-shadow: var(--studio-shadow);
+}
+
+.gallery img,
+.album-grid img,
+.folder-gallery img {
+    transition: transform .25s ease, filter .25s ease;
+}
+
+.gallery a:hover img,
+.album-grid a:hover img,
+.folder-gallery a:hover img {
+    transform: scale(1.025);
+    filter: saturate(1.05);
+}
+
+.notice,
+.message,
+.error-message {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: 16px 20px !important;
+        gap: 12px;
+    }
+
+    .header h1 {
+        font-size: clamp(1.15rem, 4vw, 1.5rem);
+    }
+
+    .container,
+    main {
+        width: min(100% - 28px, 1000px);
+        margin: 22px auto;
+    }
+
+    .toolbar {
+        align-items: stretch;
+    }
+
+    .toolbar > *,
+    .button-group > *,
+    .folder-actions > * {
+        max-width: 100%;
+    }
+
+    .login-container,
+    .register-wrapper {
+        width: min(100% - 28px, 950px);
+        max-width: none;
+    }
+
+    .register-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .info-panel,
+    .form-panel {
+        padding: 30px 24px;
+    }
+
+    .stats,
+    .stats-container {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+    }
+
+    .table-container {
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 680px;
+    }
+
+    .gallery,
+    .album-grid,
+    .folder-list {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 14px 16px !important;
+    }
+
+    .container,
+    main {
+        width: calc(100% - 24px);
+    }
+
+    .btn,
+    .button,
+    .back-btn,
+    .add-btn,
+    .subscription-btn,
+    .logout,
+    .view-btn {
+        padding: 10px 13px;
+    }
+
+    .toolbar > .btn,
+    .toolbar > .button,
+    .toolbar > .back-btn,
+    .toolbar > .add-btn,
+    .toolbar > .subscription-btn,
+    .toolbar > .logout {
+        flex: 1 1 auto;
+        text-align: center;
+    }
+
+    .error-code {
+        font-size: clamp(4rem, 22vw, 7rem);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}

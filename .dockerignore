@@ -1,0 +1,5 @@
+db/legacy
+db/data.sql
+uploads
+.git
+target

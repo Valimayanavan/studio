@@ -1,0 +1,378 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${customer != null ? customer.customer_name + ' | Photo Gallery' : 'Customer Photo Gallery'}">
+        Customer Photo Gallery
+    </title>
+    <link rel="stylesheet" th:href="@{/css/studio-ui.css}">
+    <style>
+        body {
+            min-height: 100vh;
+            background: #f4f6fb;
+            color: #172033;
+        }
+
+        .portal-header {
+            padding: 28px max(20px, calc((100% - 1180px) / 2));
+            color: #fff;
+            background: linear-gradient(120deg, #101a35, #263d70);
+            border-bottom: 3px solid #d4af37;
+        }
+
+        .portal-header h1 {
+            margin: 0;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+        }
+
+        .portal-header p {
+            margin: 6px 0 0;
+            color: #dbe4f5;
+        }
+
+        .portal-main {
+            width: min(1180px, calc(100% - 32px));
+            margin: 28px auto 48px;
+        }
+
+        .portal-card {
+            margin-bottom: 24px;
+            padding: clamp(18px, 3vw, 28px);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, .06);
+        }
+
+        .portal-card h2 {
+            margin: 0 0 6px;
+            color: #172554;
+            font-size: 1.25rem;
+        }
+
+        .section-hint {
+            margin: 0 0 20px;
+            color: #64748b;
+        }
+
+        .photo-grid,
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+            gap: 16px;
+        }
+
+        .photo-card,
+        .album-photo {
+            min-width: 0;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .photo-card img,
+        .album-photo img {
+            display: block;
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            background: #f1f5f9;
+        }
+
+        .photo-caption {
+            padding: 10px 12px;
+            overflow-wrap: anywhere;
+            color: #475569;
+            font-size: .875rem;
+        }
+
+        .album-photo label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            padding: 10px 12px;
+            cursor: pointer;
+            overflow-wrap: anywhere;
+        }
+
+        .album-photo input {
+            flex: 0 0 auto;
+            width: 18px;
+            height: 18px;
+            accent-color: #3157a4;
+        }
+
+        .portal-form {
+            display: grid;
+            gap: 12px;
+        }
+
+        .portal-form input[type="text"],
+        .portal-form input[type="file"] {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            background: #fff;
+        }
+
+        .portal-form input[type="file"] {
+            background: #f8fafc;
+        }
+
+        .portal-form button,
+        .portal-btn {
+            display: inline-flex;
+            width: fit-content;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 42px;
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 9px;
+            background: #172554;
+            color: #fff;
+            font-weight: 650;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .portal-form button:hover,
+        .portal-btn:hover {
+            background: #274581;
+            color: #fff;
+        }
+
+        .album-card {
+            padding: 18px;
+            border: 1px solid #e2e8f0;
+            border-radius: 13px;
+            background: #f8fafc;
+        }
+
+        .album-card h3 {
+            margin: 0;
+            color: #172554;
+            font-size: 1.05rem;
+            overflow-wrap: anywhere;
+        }
+
+        .album-card .album-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .album-photo img {
+            height: 110px;
+        }
+
+        .album-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .empty-state {
+            padding: 24px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            color: #64748b;
+            text-align: center;
+        }
+
+        .form-status {
+            min-height: 1.5em;
+            margin: 0;
+        }
+
+        @media (max-width: 600px) {
+            .portal-header {
+                padding: 22px 18px;
+            }
+
+            .portal-main {
+                width: calc(100% - 24px);
+                margin-top: 16px;
+            }
+
+            .portal-form button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="portal-header" th:if="${customer != null}">
+    <h1><i class="fa-solid fa-images" aria-hidden="true"></i> Photo gallery &amp; albums</h1>
+    <p>Welcome, <strong th:text="${customer.customer_name}">Customer</strong>. View studio photos, upload your own, and organize photos into albums.</p>
+</header>
+
+<main class="portal-main">
+    <div class="alert alert-danger" role="alert" th:if="${error != null}" th:text="${error}">
+        This customer gallery link is invalid or unavailable.
+    </div>
+    <div class="alert alert-success" role="status" th:if="${portalMessage}" th:text="${portalMessage}"></div>
+    <div class="alert alert-danger" role="alert" th:if="${portalError}" th:text="${portalError}"></div>
+
+    <section class="portal-card" th:if="${customer != null}">
+        <h2><i class="fa-solid fa-photo-film" aria-hidden="true"></i> Gallery</h2>
+        <p class="section-hint">Photos uploaded by your studio and photos you have uploaded appear here.</p>
+        <div class="photo-grid" th:if="${images != null and !#lists.isEmpty(images)}">
+            <article class="photo-card" th:each="image : ${images}">
+                <a th:href="@{'/customer_image/' + ${image.image_id}}" target="_blank" rel="noopener">
+                    <img th:src="@{'/customer_image/' + ${image.image_id}}" th:alt="${image.image_name}" loading="lazy">
+                </a>
+                <div class="photo-caption" th:text="${image.image_name}">photo.jpg</div>
+                <div class="photo-caption pt-0"
+                     th:text="${image.uploaded_by == 'CUSTOMER' ? 'Uploaded by you' : 'Uploaded by your studio'}">
+                    Uploaded by your studio
+                </div>
+            </article>
+        </div>
+        <div class="empty-state" th:if="${images == null or #lists.isEmpty(images)}">
+            No gallery photos are available yet.
+        </div>
+    </section>
+
+    <section class="portal-card" th:if="${customer != null}">
+        <h2><i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> Upload your photos</h2>
+        <p class="section-hint">Add JPG, PNG, or WEBP images to your gallery.</p>
+        <form id="galleryUploadForm" class="portal-form" enctype="multipart/form-data">
+            <input id="galleryPhotos" name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple required>
+            <button type="submit"><i class="fa-solid fa-upload" aria-hidden="true"></i> Upload photos</button>
+            <p id="galleryUploadStatus" class="form-status" role="status"></p>
+        </form>
+    </section>
+
+    <section class="portal-card" th:if="${customer != null}">
+        <h2><i class="fa-solid fa-folder-plus" aria-hidden="true"></i> Create an album</h2>
+        <p class="section-hint">Name an album, include photos already in your gallery, or add new photos directly.</p>
+        <form class="portal-form"
+              th:action="@{'/customer_portal/' + ${customer.token} + '/albums'}"
+              method="post" enctype="multipart/form-data">
+            <label for="folderName">Album name</label>
+            <input id="folderName" name="folderName" type="text" maxlength="255" placeholder="e.g. Wedding portraits" required>
+
+            <div th:if="${images != null and !#lists.isEmpty(images)}">
+                <p class="fw-semibold mb-2">Add existing gallery photos</p>
+                <div class="photo-grid">
+                    <article class="album-photo" th:each="image : ${images}">
+                        <img th:src="@{'/customer_image/' + ${image.image_id}}" th:alt="${image.image_name}" loading="lazy">
+                        <label>
+                            <input type="checkbox" name="imageIds" th:value="${image.image_id}">
+                            <span th:text="${image.image_name}">photo.jpg</span>
+                        </label>
+                    </article>
+                </div>
+            </div>
+
+            <label for="albumPhotos">Or upload photos into this album</label>
+            <input id="albumPhotos" name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+            <button type="submit"><i class="fa-solid fa-folder-plus" aria-hidden="true"></i> Create album</button>
+        </form>
+    </section>
+
+    <section class="portal-card" th:if="${customer != null}">
+        <h2><i class="fa-solid fa-folder-open" aria-hidden="true"></i> Your albums</h2>
+        <p class="section-hint">Albums keep related photos together in folders you name.</p>
+        <div class="album-grid" th:if="${albums != null and !#lists.isEmpty(albums)}">
+            <article class="album-card" th:each="album : ${albums}">
+                <h3 th:text="${album.album_name}">Album name</h3>
+                <div class="album-gallery" th:if="${album.images != null and !#lists.isEmpty(album.images)}">
+                    <div class="album-photo" th:each="image : ${album.images}">
+                        <a th:href="@{'/customer_image/' + ${image.image_id}}"
+                           target="_blank" rel="noopener">
+                            <img th:src="@{'/customer_image/' + ${image.image_id}}"
+                                 th:alt="${image.image_name}" loading="lazy">
+                        </a>
+                    </div>
+                </div>
+                <p class="text-secondary mt-3 mb-0"
+                   th:if="${album.images == null or #lists.isEmpty(album.images)}">This album is empty.</p>
+                <div class="album-actions">
+                    <a class="portal-btn" th:if="${album.images != null and !#lists.isEmpty(album.images)}"
+                       th:href="@{'/download_customer_album/' + ${album.token}}">
+                        <i class="fa-solid fa-download" aria-hidden="true"></i> Download album
+                    </a>
+                    <form class="album-upload-form" enctype="multipart/form-data"
+                          th:attr="data-album-id=${album.album_id}, data-token=${customer.token}">
+                        <input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required>
+                        <button class="portal-btn mt-2" type="submit">
+                            <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i> Add photos
+                        </button>
+                        <p class="form-status" role="status"></p>
+                    </form>
+                </div>
+            </article>
+        </div>
+        <div class="empty-state" th:if="${albums == null or #lists.isEmpty(albums)}">
+            You have not created any albums yet.
+        </div>
+    </section>
+</main>
+
+<script th:inline="javascript">
+    const customerGalleryToken = /*[[${customer != null ? customer.token : ''}]]*/ "";
+
+    document.getElementById("galleryUploadForm")?.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const status = document.getElementById("galleryUploadStatus");
+        const data = new FormData(form);
+        data.append("token", customerGalleryToken);
+        status.textContent = "Uploading photos…";
+
+        try {
+            const response = await fetch("/upload_customer_images", { method: "POST", body: data });
+            const result = await response.json();
+            status.textContent = result.message || "Photo upload failed.";
+            status.className = "form-status " + (result.success ? "text-success" : "text-danger");
+            if (result.success) {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error("Customer photo upload failed:", error);
+            status.textContent = "Unable to upload photos. Please try again.";
+            status.className = "form-status text-danger";
+        }
+    });
+
+    document.querySelectorAll(".album-upload-form").forEach((form) => {
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const status = form.querySelector(".form-status");
+            const data = new FormData(form);
+            data.append("token", form.dataset.token);
+            data.append("albumId", form.dataset.albumId);
+            status.textContent = "Uploading photos…";
+
+            try {
+                const response = await fetch(
+                    "/customer_portal/" + encodeURIComponent(form.dataset.token)
+                    + "/albums/" + encodeURIComponent(form.dataset.albumId) + "/photos",
+                    { method: "POST", body: data }
+                );
+                const result = await response.json();
+                status.textContent = result.message || "Photo upload failed.";
+                status.className = "form-status " + (result.success ? "text-success" : "text-danger");
+                if (result.success) {
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.error("Album photo upload failed:", error);
+                status.textContent = "Unable to upload photos. Please try again.";
+                status.className = "form-status text-danger";
+            }
+        });
+    });
+</script>
+</body>
+</html>

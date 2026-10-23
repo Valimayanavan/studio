@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${folder.folder_name} + ' - Photos'">Customer Photos</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f8; color: #1f2937; }
+        header { padding: 24px 5%; background: #172554; color: white; }
+        main { max-width: 1200px; margin: 26px auto; padding: 0 16px; }
+        .toolbar { margin-bottom: 20px; }
+        .button { display: inline-block; border: 0; border-radius: 7px; padding: 11px 16px; background: #2563eb; color: white; text-decoration: none; font-weight: 600; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
+        article { padding: 10px; background: white; border-radius: 10px; box-shadow: 0 2px 8px #0001; }
+        article img { display: block; width: 100%; height: 200px; object-fit: contain; background: #e5e7eb; }
+        article p { overflow-wrap: anywhere; }
+        .empty { background: white; padding: 26px; border-radius: 10px; }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/studio-ui.css}">
+</head>
+<body>
+<header>
+    <h1 th:text="${folder.folder_name}">Photo folder</h1>
+    <p>Photos for <strong th:text="${customerName}">Customer</strong></p>
+</header>
+<main>
+    <div class="toolbar" th:if="${images != null and !#lists.isEmpty(images)}">
+        <a class="button" th:href="@{'/download_customer_folder/' + ${folder.token}}">
+            <i class="fa-solid fa-file-zipper" aria-hidden="true"></i>
+            Download folder as ZIP
+        </a>
+    </div>
+    <section class="gallery" th:if="${images != null and !#lists.isEmpty(images)}">
+        <article th:each="image : ${images}">
+            <a th:href="@{'/customer_folder_image/' + ${folder.token} + '/' + ${image.image_id}}"
+               target="_blank" rel="noopener">
+                <img th:src="@{'/customer_folder_image/' + ${folder.token} + '/' + ${image.image_id}}"
+                     th:alt="${image.image_name}">
+            </a>
+            <p th:text="${image.image_name}">photo.jpg</p>
+            <a th:href="@{'/download_customer_folder_image/' + ${folder.token} + '/' + ${image.image_id}}">
+                <i class="fa-solid fa-download" aria-hidden="true"></i>
+                Download photo
+            </a>
+        </article>
+    </section>
+    <section class="empty" th:if="${images == null or #lists.isEmpty(images)}">
+        This folder does not have any photos yet.
+    </section>
+</main>
+</body>
+</html>

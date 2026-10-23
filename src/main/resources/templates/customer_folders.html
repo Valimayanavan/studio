@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Photo Folders</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f4f6f8; color: #1f2937; }
+        header { padding: 20px 5%; background: #172554; color: white; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        header a, .button { display: inline-block; border: 0; border-radius: 7px; padding: 10px 14px; background: #2563eb; color: white; text-decoration: none; cursor: pointer; font-weight: 600; }
+        main { max-width: 1000px; margin: 28px auto; padding: 0 16px; }
+        section, .folder { background: white; padding: 22px; margin-bottom: 18px; border-radius: 10px; box-shadow: 0 2px 8px #0001; }
+        input[type=text], input[type=file] { display: block; width: 100%; margin: 12px 0; padding: 10px; box-sizing: border-box; }
+        .folder-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .folder-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin: 16px 0; }
+        .folder-photo img { display: block; width: 100%; height: 120px; object-fit: contain; background: #e5e7eb; border-radius: 6px; }
+        .folder-photo p { overflow-wrap: anywhere; }
+        .folder-photo a { color: #1d4ed8; }
+        .folder-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+        .notice { padding: 12px; border-radius: 7px; margin-bottom: 16px; background: #eff6ff; }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/studio-ui.css}">
+</head>
+<body>
+<header>
+    <div>
+        <strong>Photo folders for <span th:text="${customer.customer_name}">Customer</span></strong>
+        <div>Studio: <span th:text="${studioName}">Studio</span></div>
+    </div>
+    <a href="/customer_home">Back to customers</a>
+</header>
+<main>
+    <p class="notice" th:if="${folderMessage}" th:text="${folderMessage}"></p>
+    <p class="notice" th:if="${error}" th:text="${error}"></p>
+    <section>
+        <h2>Create a folder</h2>
+        <form th:action="@{'/customer_folders/' + ${customer.customer_id}}"
+              method="post" enctype="multipart/form-data">
+            <label for="folderName">Folder name</label>
+            <input id="folderName" name="folderName" type="text" maxlength="255" required>
+            <label for="photos">Upload pictures (JPG, PNG, or WEBP; optional)</label>
+            <input id="photos" name="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+            <button class="button" type="submit">
+                <i class="fa-solid fa-folder-plus" aria-hidden="true"></i>
+                Create folder
+            </button>
+        </form>
+    </section>
+    <h2>Existing folders</h2>
+    <div class="folder-list" th:if="${folders != null and !#lists.isEmpty(folders)}">
+        <section class="folder" th:each="folder : ${folders}">
+            <h3 th:text="${folder.folder_name}">Folder</h3>
+            <p><span th:text="${folder.image_count}">0</span> photo(s)</p>
+            <p>Customers can view and download this folder from their main studio link.</p>
+            <div class="folder-actions"
+                 th:if="${folder.images != null and !#lists.isEmpty(folder.images)}">
+                <a class="button" th:href="@{'/customer_folder/' + ${folder.token}}">
+                    <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
+                    Open shared folder
+                </a>
+                <a class="button" th:href="@{'/download_customer_folder/' + ${folder.token}}">
+                    <i class="fa-solid fa-file-zipper" aria-hidden="true"></i>
+                    Download folder (.zip)
+                </a>
+            </div>
+            <div class="folder-gallery" th:if="${folder.images != null and !#lists.isEmpty(folder.images)}">
+                <article class="folder-photo" th:each="image : ${folder.images}">
+                    <a th:href="@{'/customer_folder_image/' + ${folder.token} + '/' + ${image.image_id}}"
+                       target="_blank" rel="noopener">
+                        <img th:src="@{'/customer_folder_image/' + ${folder.token} + '/' + ${image.image_id}}"
+                             th:alt="${image.image_name}">
+                    </a>
+                    <p th:text="${image.image_name}">photo.jpg</p>
+                    <a th:href="@{'/download_customer_folder_image/' + ${folder.token} + '/' + ${image.image_id}}">
+                        <i class="fa-solid fa-download" aria-hidden="true"></i>
+                        Download photo
+                    </a>
+                </article>
+            </div>
+            <p th:if="${folder.images == null or #lists.isEmpty(folder.images)}">No photos in this folder yet.</p>
+            <form th:action="@{'/customer_folder/' + ${folder.folder_id} + '/upload'}"
+                  method="post" enctype="multipart/form-data">
+                <label th:for="'more-photos-' + ${folder.folder_id}">Add pictures</label>
+                <input th:id="'more-photos-' + ${folder.folder_id}" name="photos" type="file"
+                       accept="image/jpeg,image/png,image/webp" multiple required>
+                <button class="button" type="submit">
+                    <i class="fa-solid fa-cloud-arrow-up" aria-hidden="true"></i>
+                    Upload pictures
+                </button>
+            </form>
+        </section>
+    </div>
+    <section th:if="${folders == null or #lists.isEmpty(folders)}">
+        No folders have been created for this customer yet.
+    </section>
+</main>
+</body>
+</html>

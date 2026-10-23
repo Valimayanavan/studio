@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscriptions | Studio Admin</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0b132b;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(29, 15, 52, 0.8) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(30, 58, 138, 0.3) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-brand { display: flex; align-items: center; gap: 12px; }
+        .brand-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: #0d1321; font-size: 20px;
+        }
+        .header h1 { font-size: 20px; font-weight: 700; color: #f8fafc; }
+        .user-info {
+            font-size: 14px; color: #94a3b8;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 8px 16px; border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .user-info strong { color: #f3e5ab; }
+
+        .container { width: 92%; max-width: 1280px; margin: 35px auto; flex: 1; }
+
+        .toolbar {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 15px; margin-bottom: 25px;
+        }
+        .toolbar h2 { font-size: 24px; }
+        .button-group { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        .btn {
+            border: none; padding: 12px 20px; border-radius: 10px;
+            cursor: pointer; text-decoration: none; font-size: 14px; font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .back-btn {
+            background: linear-gradient(135deg, #d4af37 0%, #aa771c 100%);
+            color: #0f172a;
+        }
+        .back-btn:hover { transform: translateY(-2px); }
+        .logout {
+            background: rgba(225, 29, 72, 0.15); color: #fecdd3;
+            border: 1px solid rgba(225, 29, 72, 0.3);
+        }
+        .logout:hover { background: rgba(225, 29, 72, 0.25); color: white; }
+
+        .message {
+            padding: 14px 18px; border-radius: 10px; margin-bottom: 25px;
+            font-size: 14px; display: flex; align-items: center; gap: 10px;
+        }
+        .error {
+            background: rgba(225, 29, 72, 0.15); color: #fecdd3;
+            border-left: 4px solid #e11d48;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 16px; margin-bottom: 28px;
+        }
+        .stat {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px; padding: 18px 20px;
+        }
+        .stat .label {
+            font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #94a3b8;
+        }
+        .stat .value { font-size: 28px; font-weight: 700; margin-top: 6px; color: #f3e5ab; }
+
+        .table-container {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px; overflow-x: auto;
+        }
+        table { width: 100%; min-width: 1000px; border-collapse: collapse; text-align: left; }
+        th {
+            background: rgba(30, 41, 59, 0.8); color: #94a3b8;
+            font-size: 12px; text-transform: uppercase; padding: 16px 20px;
+        }
+        td {
+            padding: 16px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #e2e8f0; vertical-align: middle; font-size: 14px;
+        }
+        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+        td.mono {
+            font-family: Consolas, 'Courier New', monospace; font-size: 12px;
+            color: #94a3b8; word-break: break-all; max-width: 220px;
+        }
+
+        .badge {
+            display: inline-block; padding: 4px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 700;
+        }
+        .badge.active  { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .badge.pending { background: rgba(245, 158, 11, 0.15); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .badge.expired { background: rgba(225, 29, 72, 0.15);  color: #fda4af; border: 1px solid rgba(225, 29, 72, 0.4); }
+        .badge.other   { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.4); }
+
+        .empty { text-align: center; padding: 50px 20px; color: #94a3b8; }
+
+        @media (max-width: 768px) {
+            .header { padding: 14px 18px; }
+            .header h1 { font-size: 16px; }
+            .user-info { display: none; }
+            .container { width: 96%; margin: 20px auto; }
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/studio-ui.css}">
+</head>
+<body>
+
+<header class="header">
+    <div class="header-brand">
+        <div class="brand-icon"><i class="fa-solid fa-camera-retro"></i></div>
+        <h1>Studio Admin</h1>
+    </div>
+    <div class="user-info">
+        <i class="fa-solid fa-user-shield"></i>
+        Logged in as <strong th:text="${username}">admin</strong>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="toolbar">
+        <h2><i class="fa-solid fa-credit-card"></i> Subscriptions</h2>
+
+        <div class="button-group">
+            <a href="/home" class="btn back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Dashboard
+            </a>
+            <a href="/logout" class="btn logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <div th:if="${errorMessage}" class="message error">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span th:text="${errorMessage}">Error</span>
+    </div>
+
+    <section class="stats">
+        <div class="stat">
+            <div class="label">Total orders</div>
+            <div class="value" th:text="${totalCount}">0</div>
+        </div>
+        <div class="stat">
+            <div class="label">Active</div>
+            <div class="value" th:text="${activeCount}">0</div>
+        </div>
+        <div class="stat">
+            <div class="label">Expired</div>
+            <div class="value" th:text="${expiredCount}">0</div>
+        </div>
+        <div class="stat">
+            <div class="label">Pending payment</div>
+            <div class="value" th:text="${pendingCount}">0</div>
+        </div>
+        <div class="stat">
+            <div class="label">Revenue (₹)</div>
+            <div class="value" th:text="${revenue}">0</div>
+        </div>
+    </section>
+
+    <div class="table-container">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Plan</th>
+                <th>Amount (₹)</th>
+                <th>Status</th>
+                <th>Free trial</th>
+                <th>Start</th>
+                <th>Expiry</th>
+                <th>Studio ID</th>
+                <th>Order ID</th>
+                <th>Payment ID</th>
+                <th>Created</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="s : ${subscriptions}">
+                <td th:text="${s.id}">1</td>
+                <td th:text="${s.name}">Name</td>
+                <td th:text="${s.phone}">9999999999</td>
+                <td th:text="${s.email}">mail@example.com</td>
+                <td th:text="${s.plan}">1_MONTH</td>
+                <td th:text="${s.amount}">99</td>
+                <td>
+                    <span th:if="${s.status == 'ACTIVE' and s.expired}" class="badge expired">EXPIRED</span>
+                    <span th:if="${s.status == 'ACTIVE' and !s.expired}" class="badge active">ACTIVE</span>
+                    <span th:if="${s.status == 'PENDING'}" class="badge pending">PENDING</span>
+                    <span th:if="${s.status != 'ACTIVE' and s.status != 'PENDING'}"
+                          class="badge other" th:text="${s.status}">OTHER</span>
+                </td>
+                <td th:text="${s.trialStartDate != null ? s.trialStartDate + ' to ' + s.trialEndDate : '-'}">-</td>
+                <td th:text="${s.startDate != null ? s.startDate : '-'}">-</td>
+                <td th:text="${s.expiryDate != null ? s.expiryDate : '-'}">-</td>
+                <td class="mono" th:text="${s.studioId != null ? s.studioId : '-'}">-</td>
+                <td class="mono" th:text="${s.orderId != null ? s.orderId : '-'}">-</td>
+                <td class="mono" th:text="${s.paymentId != null ? s.paymentId : '-'}">-</td>
+                <td th:text="${s.createdAt}">-</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(subscriptions)}">
+                <td colspan="14" class="empty">No subscription orders yet.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+</body>
+</html>
